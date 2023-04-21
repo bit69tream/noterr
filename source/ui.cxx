@@ -97,6 +97,7 @@ namespace ui {
     if (m_state == popup_menu &&
         IsMouseButtonReleased(MOUSE_BUTTON_RIGHT)) {
       m_state = just_looking;
+      SetMouseCursor(MOUSE_CURSOR_DEFAULT);
       auto maybe_action = m_popup->get_action();
       if (maybe_action.has_value()) {
         execute_popup_action(maybe_action.value());
@@ -120,6 +121,7 @@ namespace ui {
                                  "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. "
                                  "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
                                  m_theme));
+        SetMouseCursor(MOUSE_CURSOR_DEFAULT);
       } else {
         m_note_placeholder.width = mouse_position.x - m_note_placeholder.x;
         m_note_placeholder.height = mouse_position.y - m_note_placeholder.y;
@@ -143,7 +145,10 @@ namespace ui {
 
     switch (action) {
     case create_new_card: throw std::runtime_error("todo"); break;
-    case create_new_note: m_state = state::drawing_new_note; break;
+    case create_new_note:
+      raylib::SetMouseCursor(raylib::MOUSE_CURSOR_RESIZE_ALL);
+      m_state = state::drawing_new_note;
+      break;
     case quit: m_should_close = true; break;
     }
   }
