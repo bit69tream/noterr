@@ -10,15 +10,15 @@ namespace raylib_helper {
     };
   }
 
-  Rectangle into_normalized_rectangle(Rectangle rectangle) {
+  Rectangle into_proper_rectangle(Rectangle rectangle) {
     if (rectangle.width < 0) {
-      rectangle.x -= rectangle.width;
       rectangle.width = -rectangle.width;
+      rectangle.x -= rectangle.width;
     }
 
     if (rectangle.height < 0) {
-      rectangle.y -= rectangle.height;
       rectangle.height = -rectangle.height;
+      rectangle.y -= rectangle.height;
     }
 
     return rectangle;

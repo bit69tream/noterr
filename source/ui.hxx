@@ -43,7 +43,7 @@ namespace ui {
     raylib::Rectangle m_note_placeholder;
     std::vector<note> m_notes;
 
-    raylib::Rectangle adjust_coordinates(raylib::Rectangle rectangle);
+    raylib::Rectangle map_camera_coordinates_into_world_coordinates(raylib::Rectangle rectangle);
 
     void update_window_size();
     void update_camera();

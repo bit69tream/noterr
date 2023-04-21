@@ -113,7 +113,7 @@ namespace ui {
       } else if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT) && m_started_drawing) {
         m_state = just_looking;
         m_started_drawing = false;
-        m_notes.push_back(note ( adjust_coordinates(raylib_helper::into_normalized_rectangle(m_note_placeholder)),
+        m_notes.push_back(note (map_camera_coordinates_into_world_coordinates(raylib_helper::into_proper_rectangle(m_note_placeholder)),
                                  "sample text",
                                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
                                  "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. "
@@ -127,7 +127,7 @@ namespace ui {
     }
   }
 
-  raylib::Rectangle ui::adjust_coordinates(raylib::Rectangle rectangle) {
+  raylib::Rectangle ui::map_camera_coordinates_into_world_coordinates(raylib::Rectangle rectangle) {
     rectangle.x -= m_camera.offset.x;
     rectangle.y -= m_camera.offset.y;
 
@@ -167,7 +167,7 @@ namespace ui {
       if (m_state == popup_menu) {
         m_popup->render();
       } else if (m_state == drawing_new_note && m_started_drawing) {
-        DrawRectangleRec(m_note_placeholder, m_theme.placeholder);
+        DrawRectangleRec(raylib_helper::into_proper_rectangle(m_note_placeholder), m_theme.placeholder);
       }
 
       DrawFPS(0, 0);
