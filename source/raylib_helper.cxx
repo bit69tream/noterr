@@ -23,4 +23,17 @@ namespace raylib_helper {
 
     return rectangle;
   }
+
+  Rectangle map_rectangle_into_world_coordinates(Rectangle rectangle, Camera2D camera) {
+    Vector2 top_left = {.x = rectangle.x, .y = rectangle.y};
+    Vector2 world_top_left = GetScreenToWorld2D(top_left, camera);
+
+    rectangle.x = world_top_left.x;
+    rectangle.y = world_top_left.y;
+    rectangle.width /= camera.zoom;
+    rectangle.height /= camera.zoom;
+
+    return rectangle;
+  }
+
 }

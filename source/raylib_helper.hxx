@@ -7,4 +7,5 @@ namespace raylib_helper {
 
   Rectangle from_vectors(Vector2 position, Vector2 dimensions);
   Rectangle into_proper_rectangle(Rectangle rectangle);
+  Rectangle map_rectangle_into_world_coordinates(Rectangle rectangle, Camera2D camera);
 }

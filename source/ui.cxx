@@ -57,6 +57,9 @@ namespace ui {
   void ui::update_window_size() {
     m_width = raylib::GetRenderWidth();
     m_height = raylib::GetRenderHeight();
+
+    m_camera.offset.x = m_width / 2;
+    m_camera.offset.y = m_height / 2;
   }
 
   void ui::update_camera() {
@@ -66,8 +69,8 @@ namespace ui {
 
     if (IsMouseButtonDown(raylib::MOUSE_BUTTON_LEFT)) {
       raylib::Vector2 mouse_delta = raylib::GetMouseDelta();
-      m_camera.offset.x += mouse_delta.x;
-      m_camera.offset.y += mouse_delta.y;
+      m_camera.target.x -= mouse_delta.x / m_camera.zoom;
+      m_camera.target.y -= mouse_delta.y / m_camera.zoom;
     }
 
     m_camera.zoom += raylib::GetMouseWheelMove() * 0.1;
@@ -114,7 +117,7 @@ namespace ui {
       } else if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT) && m_started_drawing) {
         m_state = just_looking;
         m_started_drawing = false;
-        m_notes.push_back(note (map_camera_coordinates_into_world_coordinates(raylib_helper::into_proper_rectangle(m_note_placeholder)),
+        m_notes.push_back(note (raylib_helper::map_rectangle_into_world_coordinates(raylib_helper::into_proper_rectangle(m_note_placeholder), m_camera),
                                  "sample text",
                                  "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
                                  "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. "
@@ -127,17 +130,6 @@ namespace ui {
         m_note_placeholder.height = mouse_position.y - m_note_placeholder.y;
       }
     }
-  }
-
-  raylib::Rectangle ui::map_camera_coordinates_into_world_coordinates(raylib::Rectangle rectangle) {
-    rectangle.x -= m_camera.offset.x;
-    rectangle.y -= m_camera.offset.y;
-
-    rectangle.x /= m_camera.zoom;
-    rectangle.y /= m_camera.zoom;
-    rectangle.width /= m_camera.zoom;
-    rectangle.height /= m_camera.zoom;
-    return rectangle;
   }
 
   void ui::execute_popup_action(popup_actions action) {
