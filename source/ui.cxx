@@ -27,18 +27,22 @@ namespace ui {
       .zoom = 1,
     };
 
+    // TODO: load themes from config file
     m_theme = theme {
       .font_size = 20,
-      .font_spacing = 1,
+      .font_spacing = 2,
       .font = GetFontDefault(),
 
-      .background_color = WHITE,
+      .background = WHITE,
 
-      .popup_background_color = LIGHTGRAY,
-      .popup_foreground_color = BLACK,
+      .border = BLACK,
+      .border_size = 2,
+
+      .popup_background = LIGHTGRAY,
+      .popup_foreground = BLACK,
       .popup_text_padding = 10,
 
-      .placeholder_color = MAROON,
+      .placeholder = MAROON,
     };
   }
 
@@ -139,7 +143,7 @@ namespace ui {
       if (m_state == popup_menu) {
         m_popup->render();
       } else if (m_state == drawing_new_note && m_started_drawing) {
-        DrawRectangleRec(m_note_placeholder, m_theme.placeholder_color);
+        DrawRectangleRec(m_note_placeholder, m_theme.placeholder);
       }
 
       DrawFPS(0, 0);

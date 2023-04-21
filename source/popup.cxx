@@ -23,7 +23,7 @@ namespace ui {
         Vector2 size = MeasureTextEx(m_theme.font, text.data(), m_theme.font_size, m_theme.font_spacing);
         popup_width = std::max(size.x, popup_width);
 
-        m_entries.push_back(popup_entry{
+        m_entries.push_back(popup_entry {
           .text = std::get<std::string_view>(entry),
           .action = std::get<popup_actions>(entry),
           .position = next_position,
@@ -33,6 +33,13 @@ namespace ui {
         next_position.y += size.y;
       }
       popup_width += m_theme.popup_text_padding * 2;
+
+      m_border = Rectangle {
+        .x = position.x - m_theme.border_size,
+        .y = position.y - m_theme.border_size,
+        .width = popup_width + (m_theme.border_size * 2),
+        .height = (next_position.y - position.y) + (m_theme.border_size * 2),
+      };
 
       for (auto &entry : m_entries) {
         entry.dimensions.x = popup_width;
@@ -55,21 +62,23 @@ namespace ui {
   void popup::render() {
     using namespace raylib;
 
+    DrawRectangleRec(m_border, m_theme.border);
+
     Vector2 mouse_position = GetMousePosition();
     for (const auto &entry : m_entries) {
-      Color popup_background_color = LIGHTGRAY;
-      Color popup_foreground_color = BLACK;
+      Color popup_background = LIGHTGRAY;
+      Color popup_foreground = BLACK;
       Rectangle entry_box = raylib_helper::RectangleFromVectors(entry.position, entry.dimensions);
 
       if (CheckCollisionPointRec(mouse_position, entry_box)) {
-        std::swap(popup_background_color, popup_foreground_color);
+        std::swap(popup_background, popup_foreground);
       }
 
-      DrawRectangleRec(entry_box, popup_background_color);
+      DrawRectangleRec(entry_box, popup_background);
 
       Vector2 text_position = entry.position;
       text_position.x += m_theme.popup_text_padding;
-      DrawTextEx(m_theme.font, entry.text.data(), text_position, m_theme.font_size, m_theme.font_spacing, popup_foreground_color);
+      DrawTextEx(m_theme.font, entry.text.data(), text_position, m_theme.font_size, m_theme.font_spacing, popup_foreground);
     }
   }
 

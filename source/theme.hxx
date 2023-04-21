@@ -8,12 +8,15 @@ namespace ui {
     float font_spacing;
     raylib::Font font;
 
-    raylib::Color background_color;
+    raylib::Color background;
 
-    raylib::Color popup_background_color;
-    raylib::Color popup_foreground_color;
+    raylib::Color border;
+    float border_size;
+
+    raylib::Color popup_background;
+    raylib::Color popup_foreground;
     float popup_text_padding;
 
-    raylib::Color placeholder_color;
+    raylib::Color placeholder;
   };
 };
