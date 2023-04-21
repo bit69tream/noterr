@@ -1,3 +1,4 @@
+#include <iostream>
 #include <algorithm>
 #include <array>
 #include <stdexcept>
@@ -5,7 +6,7 @@
 #include <optional>
 
 #include "ui.hxx"
-#include "ui_popup.hxx"
+#include "popup.hxx"
 
 namespace ui {
   ui::ui(std::filesystem::path file_path) : m_file_path(std::move(file_path)) {
@@ -26,7 +27,19 @@ namespace ui {
       .zoom = 1,
     };
 
-    m_font = GetFontDefault();
+    m_theme = theme {
+      .font_size = 20,
+      .font_spacing = 1,
+      .font = GetFontDefault(),
+
+      .background_color = WHITE,
+
+      .popup_background_color = LIGHTGRAY,
+      .popup_foreground_color = BLACK,
+      .popup_text_padding = 10,
+
+      .placeholder_color = MAROON,
+    };
   }
 
   ui::~ui() {
@@ -58,6 +71,8 @@ namespace ui {
     using namespace std::string_view_literals;
     using enum state;
 
+    const Vector2 mouse_position = GetMousePosition();
+
     if (m_state == just_looking &&
         IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
       m_state = popup_menu;
@@ -67,7 +82,7 @@ namespace ui {
           std::make_tuple("Quit", popup_actions::quit),
         },
         GetMousePosition(),
-        m_font, m_font_size, m_font_spacing, m_text_padding);
+        m_theme);
     }
 
     if (m_state == popup_menu &&
@@ -79,6 +94,22 @@ namespace ui {
       }
       delete m_popup.release();
     }
+
+    if (m_state == drawing_new_note) {
+      if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
+        m_note_placeholder.x = mouse_position.x;
+        m_note_placeholder.y = mouse_position.y;
+        m_note_placeholder.width = m_note_placeholder.height = 0;
+
+        m_started_drawing = true;
+      } else if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT) && m_started_drawing) {
+        m_state = just_looking;
+        m_started_drawing = false;
+      } else {
+        m_note_placeholder.width = mouse_position.x - m_note_placeholder.x;
+        m_note_placeholder.height = mouse_position.y - m_note_placeholder.y;
+      }
+    }
   }
 
   void ui::execute_action(popup_actions action) {
@@ -86,7 +117,7 @@ namespace ui {
 
     switch (action) {
     case create_new_card: throw std::runtime_error("todo"); break;
-    case create_new_note: throw std::runtime_error("todo"); break;
+    case create_new_note: m_state = state::drawing_new_note; break;
     case quit: m_should_close = true; break;
     }
   }
@@ -107,6 +138,8 @@ namespace ui {
 
       if (m_state == popup_menu) {
         m_popup->render();
+      } else if (m_state == drawing_new_note && m_started_drawing) {
+        DrawRectangleRec(m_note_placeholder, m_theme.placeholder_color);
       }
 
       DrawFPS(0, 0);

@@ -5,12 +5,14 @@
 #include <vector>
 
 #include "raylib.hxx"
-#include "ui_popup.hxx"
+#include "popup.hxx"
+#include "theme.hxx"
 
 namespace ui {
   enum class state {
     just_looking,
     popup_menu,
+    drawing_new_note,
   };
 
   class ui {
@@ -31,13 +33,13 @@ namespace ui {
     float m_height{480};
 
     state m_state{state::just_looking};
+    bool m_started_drawing{false};
 
-    float m_font_size = 20;
-    float m_font_spacing = 1;
-    float m_text_padding = 10;
-    raylib::Font m_font;
+    theme m_theme;
 
     bool m_should_close{false};
+
+    raylib::Rectangle m_note_placeholder;
 
     void update_window_size();
     void update_camera();
