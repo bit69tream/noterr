@@ -34,8 +34,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(${PROJECT_NAME}
   source/main.cxx
   source/ui.cxx
-  source/ui_popup.cxx
-  source/raylib.cxx)
+  source/popup.cxx
+  source/raylib_helper.cxx)
 set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
 
