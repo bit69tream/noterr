@@ -49,7 +49,7 @@ namespace ui {
   std::optional<popup_actions> popup::get_action() {
     raylib::Vector2 mouse_position = raylib::GetMousePosition();
     for (const auto &entry : m_entries) {
-      raylib::Rectangle entry_box = raylib_helper::RectangleFromVectors(entry.position, entry.dimensions);
+      raylib::Rectangle entry_box = raylib_helper::from_vectors(entry.position, entry.dimensions);
 
       if (CheckCollisionPointRec(mouse_position, entry_box)) {
         return entry.action;
@@ -68,7 +68,7 @@ namespace ui {
     for (const auto &entry : m_entries) {
       Color popup_background = LIGHTGRAY;
       Color popup_foreground = BLACK;
-      Rectangle entry_box = raylib_helper::RectangleFromVectors(entry.position, entry.dimensions);
+      Rectangle entry_box = raylib_helper::from_vectors(entry.position, entry.dimensions);
 
       if (CheckCollisionPointRec(mouse_position, entry_box)) {
         std::swap(popup_background, popup_foreground);

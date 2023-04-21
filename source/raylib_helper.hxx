@@ -5,5 +5,6 @@
 namespace raylib_helper {
   using namespace raylib;
 
-  Rectangle RectangleFromVectors(Vector2 position, Vector2 dimensions);
+  Rectangle from_vectors(Vector2 position, Vector2 dimensions);
+  Rectangle into_normalized_rectangle(Rectangle rectangle);
 }

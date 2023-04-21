@@ -7,6 +7,7 @@
 #include "raylib.hxx"
 #include "popup.hxx"
 #include "theme.hxx"
+#include "note.hxx"
 
 namespace ui {
   enum class state {
@@ -40,6 +41,9 @@ namespace ui {
     bool m_should_close{false};
 
     raylib::Rectangle m_note_placeholder;
+    std::vector<note> m_notes;
+
+    raylib::Rectangle adjust_coordinates(raylib::Rectangle rectangle);
 
     void update_window_size();
     void update_camera();
@@ -47,6 +51,6 @@ namespace ui {
 
     void render();
 
-    void execute_action(popup_actions action);
+    void execute_popup_action(popup_actions action);
   };
 };

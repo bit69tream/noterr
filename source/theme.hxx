@@ -18,5 +18,8 @@ namespace ui {
     float popup_text_padding;
 
     raylib::Color placeholder;
+
+    raylib::Color note_background;
+    raylib::Color note_foreground;
   };
 };

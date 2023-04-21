@@ -7,6 +7,7 @@
 
 #include "ui.hxx"
 #include "popup.hxx"
+#include "raylib_helper.hxx"
 
 namespace ui {
   ui::ui(std::filesystem::path file_path) : m_file_path(std::move(file_path)) {
@@ -43,6 +44,9 @@ namespace ui {
       .popup_text_padding = 10,
 
       .placeholder = MAROON,
+
+      .note_background = RAYWHITE,
+      .note_foreground = BLACK,
     };
   }
 
@@ -70,6 +74,7 @@ namespace ui {
     m_camera.zoom = std::clamp(m_camera.zoom, 0.1f, 1.0f);
   }
 
+  // NOTE: this can probably be written in a better way
   void ui::update_ui_state() {
     using namespace raylib;
     using namespace std::string_view_literals;
@@ -94,7 +99,7 @@ namespace ui {
       m_state = just_looking;
       auto maybe_action = m_popup->get_action();
       if (maybe_action.has_value()) {
-        execute_action(maybe_action.value());
+        execute_popup_action(maybe_action.value());
       }
       delete m_popup.release();
     }
@@ -104,11 +109,17 @@ namespace ui {
         m_note_placeholder.x = mouse_position.x;
         m_note_placeholder.y = mouse_position.y;
         m_note_placeholder.width = m_note_placeholder.height = 0;
-
         m_started_drawing = true;
       } else if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT) && m_started_drawing) {
         m_state = just_looking;
         m_started_drawing = false;
+        m_notes.push_back(note ( adjust_coordinates(raylib_helper::into_normalized_rectangle(m_note_placeholder)),
+                                 "sample text",
+                                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
+                                 "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. "
+                                 "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. "
+                                 "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+                                 m_theme));
       } else {
         m_note_placeholder.width = mouse_position.x - m_note_placeholder.x;
         m_note_placeholder.height = mouse_position.y - m_note_placeholder.y;
@@ -116,7 +127,18 @@ namespace ui {
     }
   }
 
-  void ui::execute_action(popup_actions action) {
+  raylib::Rectangle ui::adjust_coordinates(raylib::Rectangle rectangle) {
+    rectangle.x -= m_camera.offset.x;
+    rectangle.y -= m_camera.offset.y;
+
+    rectangle.x /= m_camera.zoom;
+    rectangle.y /= m_camera.zoom;
+    rectangle.width /= m_camera.zoom;
+    rectangle.height /= m_camera.zoom;
+    return rectangle;
+  }
+
+  void ui::execute_popup_action(popup_actions action) {
     using enum popup_actions;
 
     switch (action) {
@@ -136,7 +158,9 @@ namespace ui {
 
       BeginMode2D(m_camera);
       {
-
+        for (const auto &note : m_notes) {
+          note.render();
+        }
       }
       EndMode2D();
 
