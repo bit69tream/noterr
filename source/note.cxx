@@ -13,43 +13,57 @@ namespace ui {
         m_title(std::move(title)),
         m_text(std::move(text)),
         m_theme(theme) {
-    m_box.x += m_theme.border_size;
-    m_box.y += m_theme.border_size;
-    m_box.width -= m_theme.border_size * 2;
-    m_box.height -= m_theme.border_size * 2;
+    compute_element_coordinates();
+  }
 
+  note::note(raylib::Rectangle box, theme theme)
+      : m_box(box),
+        m_border_box(box),
+        m_theme(theme) {
     compute_element_coordinates();
   }
 
   note::~note() {}
 
   bool note::operator>(const note &that) const {
-    return (this->m_border_box.width > that.m_border_box.width) && (this->m_border_box.height > that.m_border_box.height);
+    return (this->m_border_box.width > that.m_border_box.width)
+      && (this->m_border_box.height > that.m_border_box.height);
   }
 
   void note::compute_element_coordinates() {
     using namespace raylib;
 
-    Vector2 title_size = MeasureTextEx(m_theme.font, m_title.c_str(),
+    m_box.x += m_theme.border_size;
+    m_box.y += m_theme.border_size;
+    m_box.width -= m_theme.border_size * 2;
+    m_box.height -= m_theme.border_size * 2;
+
+    const char *temp;
+    if (m_title.empty()) {
+      temp = " ";
+    } else {
+      temp = m_title.c_str();
+    }
+    Vector2 title_size = MeasureTextEx(m_theme.font, temp,
                                        m_theme.font_size, m_theme.font_spacing);
 
     m_splitter_line = Rectangle {
       .x = m_box.x + m_theme.border_size,
-      .y = m_box.y + title_size.y + m_theme.font_spacing,
+      .y = m_box.y + title_size.y + (2 * m_theme.font_spacing),
       .width = m_box.width - (m_theme.border_size * 2),
       .height = m_theme.border_size,
     };
 
-    m_title_position = raylib::Vector2 {
+    m_title_position = Vector2 {
       .x = m_box.x + (m_box.width / 2) - (title_size.x / 2),
-      .y = m_box.y,
+      .y = m_box.y + m_theme.font_spacing,
     };
 
-    m_text_bounding_box = raylib::Rectangle {
-      .x = m_box.x,
-      .y = m_splitter_line.y + m_splitter_line.height,
-      .width = m_box.width,
-      .height = m_box.height - title_size.y - m_theme.font_spacing - m_theme.border_size,
+    m_text_bounding_box = Rectangle {
+      .x = m_box.x + m_theme.font_spacing,
+      .y = m_splitter_line.y + m_splitter_line.height + m_theme.font_spacing,
+      .width = m_box.width - (2 * m_theme.font_spacing),
+      .height = m_box.height - title_size.y - (4 * m_theme.font_spacing) - m_theme.border_size,
     };
   }
 

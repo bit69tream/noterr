@@ -12,6 +12,7 @@ namespace ui {
     void render() const;
 
     note(raylib::Rectangle box, std::string title, std::string text, theme theme);
+    note(raylib::Rectangle box, theme theme);
     ~note();
 
     bool operator>(const note &that) const;
