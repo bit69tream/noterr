@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iostream>
 
 #include "raylib_helper.hxx"
 #include "theme.hxx"
@@ -41,41 +42,38 @@ namespace raylib_helper {
   }
 
   // NOTE: this is slow af
-  void render_wrapping_text_in_bounds(std::string_view text, Rectangle bounding_box, ui::theme theme) {
-    const float glyph_scale_factor = theme.font_size / theme.font.baseSize;
+  void render_wrapping_text_in_bounds(std::wstring_view text, Rectangle bounding_box, ui::theme theme) {
     const float initial_x_position = bounding_box.x + theme.font_spacing;
 
     float current_line_max_glyph_height = 0;
     Vector2 next_position = {.x = initial_x_position, .y = bounding_box.y};
-    for (const char codepoint : text) {
+    for (const auto codepoint : text) {
       const int glyph_index = GetGlyphIndex(theme.font, codepoint);
       const Rectangle &glyph_box = theme.font.recs[glyph_index];
-      const float glyph_width = (glyph_box.width * glyph_scale_factor);
-      const float glyph_height = (glyph_box.height * glyph_scale_factor);
 
-      current_line_max_glyph_height = std::max(glyph_height, current_line_max_glyph_height);
+      current_line_max_glyph_height = std::max(glyph_box.height, current_line_max_glyph_height);
 
       if (codepoint == '\n') {
         next_position.x = initial_x_position;
         next_position.y += current_line_max_glyph_height;
-        current_line_max_glyph_height = 0;
+        current_line_max_glyph_height = static_cast<float>(theme.font.baseSize) / 2.0f;
         continue;
       }
 
       Vector2 current_position = next_position;
-      next_position.x += glyph_width + theme.font_spacing;
+      next_position.x += glyph_box.width + theme.font_spacing;
 
       bool is_inside_of_bounding_box = CheckCollisionPointRec(next_position, bounding_box);
       if (!is_inside_of_bounding_box) {
         current_position.x = initial_x_position;
         current_position.y += current_line_max_glyph_height;
-        current_line_max_glyph_height = glyph_height;
+        current_line_max_glyph_height = glyph_box.height;
 
         next_position = current_position;
-        next_position.x += glyph_width + theme.font_spacing;
+        next_position.x += glyph_box.width + theme.font_spacing;
       }
 
-      bool cannot_be_put_inside_bounding_box = (current_position.y + glyph_height) >= (bounding_box.y + bounding_box.height);
+      bool cannot_be_put_inside_bounding_box = (current_position.y + glyph_box.height) >= (bounding_box.y + bounding_box.height);
       if (cannot_be_put_inside_bounding_box) {
         break;
       }

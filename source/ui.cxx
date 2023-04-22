@@ -26,6 +26,8 @@ namespace ui {
 
     SetWindowTitle(m_file_path.filename().c_str());
 
+    SetTargetFPS(60);
+
     m_camera = Camera2D {
       .offset = Vector2 {0, 0},
       .target = Vector2 {0, 0},
@@ -34,10 +36,11 @@ namespace ui {
     };
 
     // TODO: load themes from config file
+    const int font_size = 25;
     m_theme = theme {
-      .font_size = 20,
+      .font_size = font_size,
       .font_spacing = 2,
-      .font = GetFontDefault(),
+      .font = LoadFontEx("TimesNewerRoman-Regular.otf", font_size, nullptr, 0),
 
       .background = WHITE,
 
@@ -57,29 +60,38 @@ namespace ui {
     SetMouseCursor(MOUSE_CURSOR_ARROW);
   }
 
-  ui::~ui() { raylib::CloseWindow(); }
+  ui::~ui() {
+    using namespace raylib;
+
+    raylib::UnloadFont(m_theme.font);
+    raylib::CloseWindow();
+  }
 
   void ui::update_window_size() {
-    m_width = raylib::GetRenderWidth();
-    m_height = raylib::GetRenderHeight();
+    m_width = static_cast<float>(raylib::GetRenderWidth());
+    m_height = static_cast<float>(raylib::GetRenderHeight());
 
     m_camera.offset.x = m_width / 2;
     m_camera.offset.y = m_height / 2;
   }
 
   void ui::update_camera() {
+    using namespace raylib;
+
     if (m_state != state::just_looking) {
       return;
     }
 
-    if (IsMouseButtonDown(raylib::MOUSE_BUTTON_LEFT)) {
-      raylib::Vector2 mouse_delta = raylib::GetMouseDelta();
+    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+      Vector2 mouse_delta = GetMouseDelta();
       m_camera.target.x -= mouse_delta.x / m_camera.zoom;
       m_camera.target.y -= mouse_delta.y / m_camera.zoom;
     }
 
-    m_camera.zoom += raylib::GetMouseWheelMove() * 0.1;
-    m_camera.zoom = std::clamp(m_camera.zoom, 0.5f, 1.0f);
+    // m_camera.zoom += GetMouseWheelMove() * 0.1f;
+    // constexpr float maximum_zoom = 2.0f;
+    // constexpr float minimum_zoom = 0.5f;
+    // m_camera.zoom = std::clamp(m_camera.zoom, minimum_zoom, maximum_zoom);
   }
 
   // NOTE: this can probably be written in a better way
@@ -119,6 +131,7 @@ namespace ui {
         m_started_drawing = true;
       } else if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT) && m_started_drawing) {
         using namespace raylib_helper;
+        using namespace std::literals;
 
         m_state = just_looking;
         m_started_drawing = false;
@@ -126,8 +139,8 @@ namespace ui {
         m_notes.push_back(note(
           map_rectangle_into_world_coordinates(
             into_proper_rectangle(m_note_placeholder), m_camera),
-          "sample text",
-          "I'd just like to interject for a moment. What you're refering to as Linux, is in fact, GNU/Linux, or as I've recently taken to calling it, GNU plus Linux. Linux is not an operating system unto itself, but rather another free component of a fully functioning GNU system made useful by the GNU corelibs, shell utilities and vital system components comprising a full OS as defined by POSIX.\n\nMany computer users run a modified version of the GNU system every day, without realizing it. Through a peculiar turn of events, the version of GNU which is widely used today is often called Linux, and many of its users are not aware that it is basically the GNU system, developed by the GNU Project.\n\nThere really is a Linux, and these people are using it, but it is just a part of the system they use. Linux is the kernel: the program in the system that allocates the machine's resources to the other programs that you run. The kernel is an essential part of an operating system, but useless by itself; it can only function in the context of a complete operating system. Linux is normally used in combination with the GNU operating system: the whole system is basically GNU with Linux added, or GNU/Linux. All the so-called Linux distributions are really distributions of GNU/Linux!",
+          L"sample text"s,
+          L"I'd just like to interject for a moment. What you're refering to as Linux, is in fact, GNU/Linux, or as I've recently taken to calling it, GNU plus Linux. Linux is not an operating system unto itself, but rather another free component of a fully functioning GNU system made useful by the GNU corelibs, shell utilities and vital system components comprising a full OS as defined by POSIX.\nMany computer users run a modified version of the GNU system every day, without realizing it. Through a peculiar turn of events, the version of GNU which is widely used today is often called Linux, and many of its users are not aware that it is basically the GNU system, developed by the GNU Project.\n\nThere really is a Linux, and these people are using it, but it is just a part of the system they use. Linux is the kernel: the program in the system that allocates the machine's resources to the other programs that you run. The kernel is an essential part of an operating system, but useless by itself; it can only function in the context of a complete operating system. Linux is normally used in combination with the GNU operating system: the whole system is basically GNU with Linux added, or GNU/Linux. All the so-called Linux distributions are really distributions of GNU/Linux!"s,
           m_theme));
 
         std::stable_sort(m_notes.begin(), m_notes.end(), [](const note &first, const note &second) {
@@ -197,3 +210,5 @@ namespace ui {
     }
   }
 };  // namespace ui
+
+// TODO: some sort of debug menu

@@ -11,7 +11,7 @@ namespace ui {
     public:
     void render() const;
 
-    note(raylib::Rectangle box, std::string title, std::string text, theme theme);
+    note(raylib::Rectangle box, std::wstring title, std::wstring text, theme theme);
     note(raylib::Rectangle box, theme theme);
     ~note();
 
@@ -24,10 +24,10 @@ namespace ui {
 
     raylib::Rectangle m_splitter_line;
 
-    std::string m_title;
-    raylib::Vector2 m_title_position;
+    std::wstring m_title;
+    raylib::Rectangle m_title_bounding_box;
 
-    std::string m_text;
+    std::wstring m_text;
     raylib::Rectangle m_text_bounding_box;
 
     theme m_theme;

@@ -2,4 +2,4 @@
 
 namespace raylib {
 #include <raylib.h>
-};
+};  // namespace raylib
