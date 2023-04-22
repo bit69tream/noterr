@@ -1,5 +1,5 @@
 #pragma once
 
 namespace raylib {
-  #include <raylib.h>
-}
+#include <raylib.h>
+};
