@@ -44,6 +44,12 @@ namespace ui {
       .height = (next_position.y - position.y) + (m_theme.border_size * 2),
     };
 
+    m_box = m_border;
+    m_box.x += m_theme.border_size;
+    m_box.y += m_theme.border_size;
+    m_box.width -= m_theme.border_size * 2;
+    m_box.height -= m_theme.border_size * 2;
+
     for (auto &entry : m_entries) {
       entry.dimensions.x = popup_width;
     }
@@ -67,7 +73,7 @@ namespace ui {
     using namespace raylib;
 
     Vector2 mouse_position = GetMousePosition();
-    if (CheckCollisionPointRec(mouse_position, m_border)) {
+    if (CheckCollisionPointRec(mouse_position, m_box)) {
       SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
     } else {
       SetMouseCursor(MOUSE_CURSOR_ARROW);
