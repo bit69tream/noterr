@@ -30,3 +30,5 @@ int main(int command_line_arguments_length, char *command_line_arguments[]) {
 
   return 0;
 }
+
+// TODO: look into clang-tidy
