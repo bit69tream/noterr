@@ -69,7 +69,7 @@ namespace raylib_helper {
       if (!is_inside_of_bounding_box) {
         current_position.x = initial_x_position;
         current_position.y += current_line_max_glyph_height;
-        current_line_max_glyph_height = 0;
+        current_line_max_glyph_height = glyph_height;
 
         next_position = current_position;
         next_position.x += glyph_width + theme.font_spacing;
