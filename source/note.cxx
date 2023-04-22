@@ -23,6 +23,10 @@ namespace ui {
 
   note::~note() {}
 
+  bool note::operator>(const note &that) const {
+    return (this->m_border_box.width > that.m_border_box.width) && (this->m_border_box.height > that.m_border_box.height);
+  }
+
   void note::compute_element_coordinates() {
     using namespace raylib;
 
