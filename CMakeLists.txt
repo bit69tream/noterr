@@ -40,12 +40,19 @@ add_executable(${PROJECT_NAME}
 set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
 
-if(CMAKE_BUILD_TYPE STREQUAL Debug)
-  target_compile_options(${PROJECT_NAME} PRIVATE -g -O0)
+if(MSVC)
+else()
+  if(CMAKE_BUILD_TYPE STREQUAL Debug)
+    target_compile_options(${PROJECT_NAME} PRIVATE -g -O0)
+  endif()
+
+  if(CMAKE_BUILD_TYPE STREQUAL Release)
+    target_compile_options(${PROJECT_NAME} PRIVATE -O2)
+  endif()
 endif()
 
 if(CMAKE_BUILD_TYPE STREQUAL Release)
-  target_compile_options(${PROJECT_NAME} PRIVATE -O2)
+  target_compile_definitions(${PROJECT_NAME} PRIVATE NO_RAYLIB_INFO)
 endif()
 
 if(MSVC)
