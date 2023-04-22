@@ -66,9 +66,15 @@ std::optional<popup_actions> popup::get_action() {
 void popup::render() {
   using namespace raylib;
 
+  Vector2 mouse_position = GetMousePosition();
+  if (CheckCollisionPointRec(mouse_position, m_border)) {
+    SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+  } else {
+    SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+  }
+
   DrawRectangleRec(m_border, m_theme.border);
 
-  Vector2 mouse_position = GetMousePosition();
   for (const auto &entry : m_entries) {
     Color popup_background = LIGHTGRAY;
     Color popup_foreground = BLACK;
