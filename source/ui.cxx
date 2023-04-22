@@ -79,7 +79,7 @@ namespace ui {
     }
 
     m_camera.zoom += raylib::GetMouseWheelMove() * 0.1;
-    m_camera.zoom = std::clamp(m_camera.zoom, 0.1f, 1.0f);
+    m_camera.zoom = std::clamp(m_camera.zoom, 0.5f, 1.0f);
   }
 
   // NOTE: this can probably be written in a better way
