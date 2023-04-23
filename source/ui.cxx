@@ -47,8 +47,8 @@ namespace ui {
 
       .background = WHITE,
 
-      .grid_color = BLACK,
-      .grid_tile_percent = 0.02f,
+      .grid_color = GRAY,
+      .grid_tile_size_as_percentage = 0.1f,
 
       .border = BLACK,
       .border_size = 2,
@@ -73,14 +73,12 @@ namespace ui {
     }
     EndTextureMode();
 
-    m_background_shader_screen_resolution_location = GetShaderLocation(m_background_texture_shader, "screenResolution");
-    m_background_shader_grid_tile_percent_location = GetShaderLocation(m_background_texture_shader, "gridTilePercent");
-    // m_background_shader_grid_color_location = GetShaderLocation(m_background_texture_shader, "gridColor");
+    m_background_shader_screen_resolution_location = GetShaderLocation(m_background_texture_shader, "screenResolutionAndTopLeftPoint");
+    m_background_shader_grid_tile_size_as_percentage_location = GetShaderLocation(m_background_texture_shader, "gridTilePercent");
+    // m_background_shader_zoom_location = GetShaderLocation(m_background_texture_shader, "zoom");
 
     if (m_background_shader_screen_resolution_location == -1 ||
-        m_background_shader_grid_tile_percent_location == -1// ||
-        // m_background_shader_grid_color_location == -1
-        ) {
+        m_background_shader_grid_tile_size_as_percentage_location == -1) {
       throw std::runtime_error("fucky-wacky happened");
     }
   }
@@ -130,10 +128,10 @@ namespace ui {
       m_camera.target.y -= mouse_delta.y / m_camera.zoom;
     }
 
-    // m_camera.zoom += GetMouseWheelMove() * 0.1f;
-    // constexpr float maximum_zoom = 2.0f;
-    // constexpr float minimum_zoom = 0.5f;
-    // m_camera.zoom = std::clamp(m_camera.zoom, minimum_zoom, maximum_zoom);
+    m_camera.zoom += GetMouseWheelMove() * 0.1f;
+    constexpr float maximum_zoom = 2.0f;
+    constexpr float minimum_zoom = 0.5f;
+    m_camera.zoom = std::clamp(m_camera.zoom, minimum_zoom, maximum_zoom);
   }
 
   // NOTE: this can probably be written in a better way
@@ -149,6 +147,7 @@ namespace ui {
       m_state = popup_menu;
       m_popup = make_unique<popup>(
         vector<tuple<string_view, popup_actions>> {
+          make_tuple("Restore zoom", popup_actions::restore_zoom),
           make_tuple("New note", popup_actions::create_new_note),
           make_tuple("Quit", popup_actions::quit),
         },
@@ -208,6 +207,9 @@ namespace ui {
         raylib::SetMouseCursor(raylib::MOUSE_CURSOR_RESIZE_ALL);
         m_state = state::drawing_new_note;
         break;
+      case restore_zoom:
+        m_camera.zoom = 1.0f;
+        break;
       case quit:
         m_should_close = true;
         break;
@@ -222,10 +224,12 @@ namespace ui {
     {
       ClearBackground(m_theme.grid_color);
 
-      Vector2 screen_resolution = {m_width, m_height};
-      SetShaderValue(m_background_texture_shader, m_background_shader_screen_resolution_location, &screen_resolution, SHADER_UNIFORM_VEC2);
-      SetShaderValue(m_background_texture_shader, m_background_shader_grid_tile_percent_location, &m_theme.grid_tile_percent, SHADER_UNIFORM_FLOAT);
-      // SetShaderValue(m_background_texture_shader, m_background_shader_grid_color_location, &m_theme.grid_color, SHADER_UNIFORM_VEC4);
+      Vector2 top_left_world_point = GetScreenToWorld2D({0, 0}, m_camera);
+      Vector4 screen_resolution_and_top_left_world_point = {m_width, m_height, top_left_world_point.x, top_left_world_point.y};
+
+      SetShaderValue(m_background_texture_shader, m_background_shader_screen_resolution_location, &screen_resolution_and_top_left_world_point, SHADER_UNIFORM_VEC4);
+      SetShaderValue(m_background_texture_shader, m_background_shader_grid_tile_size_as_percentage_location, &m_theme.grid_tile_size_as_percentage, SHADER_UNIFORM_FLOAT);
+      // SetShaderValue(m_background_texture_shader, m_background_shader_zoom_location, &m_camera.zoom, SHADER_UNIFORM_FLOAT);
 
       BeginShaderMode(m_background_texture_shader);
       {
@@ -235,13 +239,6 @@ namespace ui {
 
       BeginMode2D(m_camera);
       {
-        // Vector2 left_top_most_visible_world_point = GetScreenToWorld2D({0, 0}, m_camera);
-        // Rectangle screen = {
-        //   .x = left_top_most_visible_world_point.x,
-        //   .y = left_top_most_visible_world_point.y,
-        //   .width = GetScreenWidth(),
-        //   .height = GetScreenHeight(),
-        // };
         for (const auto &note : m_notes) {
           note.render();
         }

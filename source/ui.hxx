@@ -46,8 +46,8 @@ namespace ui {
     raylib::Shader m_background_texture_shader;
     raylib::RenderTexture2D m_background_texture_for_shader;
     int m_background_shader_screen_resolution_location;
-    int m_background_shader_grid_tile_percent_location;
-    // int m_background_shader_grid_color_location;
+    int m_background_shader_grid_tile_size_as_percentage_location;
+    int m_background_shader_zoom_location;
 
     void update_window_size();
     void update_camera();

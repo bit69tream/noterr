@@ -12,6 +12,7 @@ namespace ui {
   enum class popup_actions {
     create_new_card,
     create_new_note,
+    restore_zoom,
     quit,
   };
 

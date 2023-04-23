@@ -3,6 +3,6 @@
 namespace raylib {
 #include <raylib.h>
   namespace gl {
-    #include <rlgl.h>
+#include <rlgl.h>
   };
 };  // namespace raylib
