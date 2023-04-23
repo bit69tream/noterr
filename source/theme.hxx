@@ -10,6 +10,9 @@ namespace ui {
 
     raylib::Color background;
 
+    raylib::Color grid_color;
+    float grid_tile_percent;
+
     raylib::Color border;
     float border_size;
 

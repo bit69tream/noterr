@@ -43,6 +43,12 @@ namespace ui {
     raylib::Rectangle m_note_placeholder;
     std::vector<note> m_notes;
 
+    raylib::Shader m_background_texture_shader;
+    raylib::RenderTexture2D m_background_texture_for_shader;
+    int m_background_shader_screen_resolution_location;
+    int m_background_shader_grid_tile_percent_location;
+    // int m_background_shader_grid_color_location;
+
     void update_window_size();
     void update_camera();
     void update_ui_state();

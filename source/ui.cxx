@@ -25,6 +25,7 @@ namespace ui {
     SetExitKey(KEY_NULL);
 
     SetWindowTitle(m_file_path.filename().c_str());
+    SetMouseCursor(MOUSE_CURSOR_ARROW);
 
     SetTargetFPS(60);
 
@@ -46,6 +47,9 @@ namespace ui {
 
       .background = WHITE,
 
+      .grid_color = BLACK,
+      .grid_tile_percent = 0.02f,
+
       .border = BLACK,
       .border_size = 2,
 
@@ -57,21 +61,57 @@ namespace ui {
 
       .note_background = RAYWHITE,
       .note_foreground = BLACK,
+
     };
 
-    SetMouseCursor(MOUSE_CURSOR_ARROW);
+    m_background_texture_shader = LoadShader(nullptr, "source/background_pattern.fs");
+
+    m_background_texture_for_shader = LoadRenderTexture((int)m_width, (int)m_height);
+    BeginTextureMode(m_background_texture_for_shader);
+    {
+      DrawRectangle(0, 0, (int)m_width, (int)m_height, m_theme.background);
+    }
+    EndTextureMode();
+
+    m_background_shader_screen_resolution_location = GetShaderLocation(m_background_texture_shader, "screenResolution");
+    m_background_shader_grid_tile_percent_location = GetShaderLocation(m_background_texture_shader, "gridTilePercent");
+    // m_background_shader_grid_color_location = GetShaderLocation(m_background_texture_shader, "gridColor");
+
+    if (m_background_shader_screen_resolution_location == -1 ||
+        m_background_shader_grid_tile_percent_location == -1// ||
+        // m_background_shader_grid_color_location == -1
+        ) {
+      throw std::runtime_error("fucky-wacky happened");
+    }
   }
 
   ui::~ui() {
     using namespace raylib;
 
-    raylib::UnloadFont(m_theme.font);
-    raylib::CloseWindow();
+    UnloadShader(m_background_texture_shader);
+    UnloadRenderTexture(m_background_texture_for_shader);
+    UnloadFont(m_theme.font);
+    CloseWindow();
   }
 
   void ui::update_window_size() {
-    m_width = static_cast<float>(raylib::GetRenderWidth());
-    m_height = static_cast<float>(raylib::GetRenderHeight());
+    using namespace raylib;
+
+    float new_width = static_cast<float>(GetRenderWidth());
+    float new_height = static_cast<float>(GetRenderHeight());
+
+    if (new_width != m_width || new_height != m_height) {
+      m_width = new_width;
+      m_height = new_height;
+
+      UnloadRenderTexture(m_background_texture_for_shader);
+      m_background_texture_for_shader = LoadRenderTexture((int)m_width, (int)m_height);
+      BeginTextureMode(m_background_texture_for_shader);
+      {
+        DrawRectangle(0, 0, (int)m_width, (int)m_height, m_theme.background);
+      }
+      EndTextureMode();
+    }
 
     m_camera.offset.x = m_width / 2;
     m_camera.offset.y = m_height / 2;
@@ -180,10 +220,28 @@ namespace ui {
 
     BeginDrawing();
     {
-      ClearBackground(WHITE);
+      ClearBackground(m_theme.grid_color);
+
+      Vector2 screen_resolution = {m_width, m_height};
+      SetShaderValue(m_background_texture_shader, m_background_shader_screen_resolution_location, &screen_resolution, SHADER_UNIFORM_VEC2);
+      SetShaderValue(m_background_texture_shader, m_background_shader_grid_tile_percent_location, &m_theme.grid_tile_percent, SHADER_UNIFORM_FLOAT);
+      // SetShaderValue(m_background_texture_shader, m_background_shader_grid_color_location, &m_theme.grid_color, SHADER_UNIFORM_VEC4);
+
+      BeginShaderMode(m_background_texture_shader);
+      {
+        DrawTexture(m_background_texture_for_shader.texture, 0, 0, WHITE);
+      }
+      EndShaderMode();
 
       BeginMode2D(m_camera);
       {
+        // Vector2 left_top_most_visible_world_point = GetScreenToWorld2D({0, 0}, m_camera);
+        // Rectangle screen = {
+        //   .x = left_top_most_visible_world_point.x,
+        //   .y = left_top_most_visible_world_point.y,
+        //   .width = GetScreenWidth(),
+        //   .height = GetScreenHeight(),
+        // };
         for (const auto &note : m_notes) {
           note.render();
         }
@@ -214,4 +272,3 @@ namespace ui {
 };  // namespace ui
 
 // TODO: some sort of debug menu
-// TODO: draw background grid like on those cutting mats
