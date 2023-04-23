@@ -35,12 +35,14 @@ namespace ui {
       .zoom = 1,
     };
 
+    constexpr int font_size = 25;
+    constexpr int unicode_cyrillic_range_end = 0x04FF;
+
     // TODO: load themes from config file
-    const int font_size = 25;
     m_theme = theme {
       .font_size = font_size,
       .font_spacing = 2,
-      .font = LoadFontEx("TimesNewerRoman-Regular.otf", font_size, nullptr, 0),
+      .font = LoadFontEx("TimesNewerRoman-Regular.otf", font_size, nullptr, unicode_cyrillic_range_end),
 
       .background = WHITE,
 
@@ -212,3 +214,4 @@ namespace ui {
 };  // namespace ui
 
 // TODO: some sort of debug menu
+// TODO: draw background grid like on those cutting mats
