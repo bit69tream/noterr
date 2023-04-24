@@ -24,7 +24,8 @@ namespace ui {
     compute_element_coordinates();
   }
 
-  note::~note() {}
+  note::~note() {
+  }
 
   bool note::operator>(const note &that) const {
     return (this->m_border_box.width > that.m_border_box.width) && (this->m_border_box.height > that.m_border_box.height);
@@ -51,7 +52,7 @@ namespace ui {
       .x = m_box.x + m_theme.font_spacing,
       .y = m_box.y + m_theme.font_spacing,
       .width = m_box.width - (2 * m_theme.font_spacing),
-      .height = title_text_height
+      .height = title_text_height,
     };
 
     m_splitter_line = Rectangle {
@@ -65,8 +66,7 @@ namespace ui {
       .x = m_box.x + m_theme.font_spacing,
       .y = m_splitter_line.y + m_splitter_line.height + m_theme.font_spacing,
       .width = m_box.width - (2 * m_theme.font_spacing),
-      .height = m_box.height - m_title_bounding_box.height - (4 * m_theme.font_spacing) - m_splitter_line.height
-    };
+      .height = m_box.height - m_title_bounding_box.height - (4 * m_theme.font_spacing) - m_splitter_line.height};
   }
 
   // TODO: scrolling

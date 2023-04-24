@@ -10,7 +10,8 @@
 #include "ui.hxx"
 
 namespace ui {
-  ui::ui(std::filesystem::path file_path) : m_file_path(std::move(file_path)) {
+  ui::ui(std::filesystem::path file_path)
+      : m_file_path(std::move(file_path)) {
     using namespace raylib;
     using namespace std::string_view_literals;
 

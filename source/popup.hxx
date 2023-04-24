@@ -23,14 +23,14 @@ namespace ui {
   };
 
   class popup {
-    public:
+  public:
     popup(std::vector<std::tuple<std::string_view, popup_actions>> entries,
           raylib::Vector2 position, theme theme);
     void render();
     std::optional<popup_actions> get_action();
     ~popup();
 
-    private:
+  private:
     std::vector<popup_entry> m_entries;
     theme m_theme;
     raylib::Rectangle m_border, m_box;

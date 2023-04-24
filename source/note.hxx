@@ -8,7 +8,7 @@
 
 namespace ui {
   class note {
-    public:
+  public:
     void render() const;
 
     note(raylib::Rectangle box, std::wstring title, std::wstring text, theme theme);
@@ -17,13 +17,14 @@ namespace ui {
 
     bool operator>(const note &that) const;
 
-    private:
+  private:
     void compute_element_coordinates();
 
     raylib::Rectangle m_box, m_border_box;
 
     raylib::Rectangle m_splitter_line;
 
+  private:
     std::wstring m_title;
     raylib::Rectangle m_title_bounding_box;
 

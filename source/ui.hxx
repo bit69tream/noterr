@@ -17,13 +17,23 @@ namespace ui {
   };
 
   class ui {
-    public:
+  public:
     ui(std::filesystem::path file_path);
     ~ui();
 
     void main_loop();
 
-    private:
+  private:
+    void update_window_size();
+    void update_camera();
+    void update_ui_state();
+
+    void render();
+
+    void execute_popup_action(popup_actions action);
+
+
+  private:
     std::filesystem::path m_file_path;
 
     raylib::Camera2D m_camera {};
@@ -48,13 +58,5 @@ namespace ui {
     int m_background_shader_screen_resolution_location;
     int m_background_shader_grid_tile_size_as_percentage_location;
     int m_background_shader_zoom_location;
-
-    void update_window_size();
-    void update_camera();
-    void update_ui_state();
-
-    void render();
-
-    void execute_popup_action(popup_actions action);
   };
 };  // namespace ui

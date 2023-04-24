@@ -1,4 +1,4 @@
-#version 330
+#version 330                    // -*- mode: glsl -*-
 out vec4 finalColor;
 
 in vec2 fragTexCoord;
