@@ -33,6 +33,6 @@ namespace ui {
   private:
     std::vector<popup_entry> m_entries;
     theme m_theme;
-    raylib::Rectangle m_border, m_box;
+    raylib::Rectangle m_border;
   };
 };  // namespace ui

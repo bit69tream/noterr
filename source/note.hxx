@@ -22,7 +22,7 @@ namespace ui {
 
     raylib::Rectangle m_box, m_border_box;
 
-    raylib::Rectangle m_splitter_line;
+    raylib::Rectangle m_title_delimiter;
 
   private:
     std::wstring m_title;

@@ -6,14 +6,12 @@
 #include "raylib_helper.hxx"
 
 namespace ui {
-  popup::popup(std::vector<std::tuple<std::string_view, popup_actions>> entries,
-               raylib::Vector2 position, theme theme)
+  popup::popup(std::vector<std::tuple<std::string_view, popup_actions>> entries, raylib::Vector2 position, theme theme)
       : m_theme(theme) {
     using namespace raylib;
 
     if (entries.size() == 0) {
-      throw std::invalid_argument(
-        "entries vector must contain at least one element.");
+      throw std::invalid_argument("entries vector must contain at least one element.");
     }
 
     m_entries.reserve(entries.size());
@@ -22,8 +20,7 @@ namespace ui {
     Vector2 next_position = position;
     for (const auto &entry : entries) {
       std::string_view text = std::get<std::string_view>(entry);
-      Vector2 size = MeasureTextEx(m_theme.font, text.data(), m_theme.font_size,
-                                   m_theme.font_spacing);
+      Vector2 size = MeasureTextEx(m_theme.font, text.data(), m_theme.font_size, m_theme.font_spacing);
       popup_width = std::max(size.x, popup_width);
 
       m_entries.push_back(popup_entry {
@@ -44,12 +41,6 @@ namespace ui {
       .height = (next_position.y - position.y) + (m_theme.border_size * 2),
     };
 
-    m_box = m_border;
-    m_box.x += m_theme.border_size;
-    m_box.y += m_theme.border_size;
-    m_box.width -= m_theme.border_size * 2;
-    m_box.height -= m_theme.border_size * 2;
-
     for (auto &entry : m_entries) {
       entry.dimensions.x = popup_width;
     }
@@ -58,8 +49,7 @@ namespace ui {
   std::optional<popup_actions> popup::get_action() {
     raylib::Vector2 mouse_position = raylib::GetMousePosition();
     for (const auto &entry : m_entries) {
-      raylib::Rectangle entry_box =
-        raylib_helper::from_vectors(entry.position, entry.dimensions);
+      raylib::Rectangle entry_box = raylib_helper::from_vectors(entry.position, entry.dimensions);
 
       if (CheckCollisionPointRec(mouse_position, entry_box)) {
         return entry.action;
@@ -73,12 +63,7 @@ namespace ui {
     using namespace raylib;
 
     Vector2 mouse_position = GetMousePosition();
-    if (CheckCollisionPointRec(mouse_position, m_box)) {
-      SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
-    } else {
-      SetMouseCursor(MOUSE_CURSOR_ARROW);
-    }
-
+    bool isFocusingAnEntry = false;
     DrawRectangleRec(m_border, m_theme.border);
 
     for (const auto &entry : m_entries) {
@@ -88,6 +73,7 @@ namespace ui {
 
       if (CheckCollisionPointRec(mouse_position, entry_box)) {
         std::swap(popup_background, popup_foreground);
+        isFocusingAnEntry = true;
       }
 
       DrawRectangleRec(entry_box, popup_background);
@@ -96,6 +82,12 @@ namespace ui {
       text_position.x += m_theme.popup_text_padding;
       DrawTextEx(m_theme.font, entry.text.data(), text_position,
                  m_theme.font_size, m_theme.font_spacing, popup_foreground);
+    }
+
+    if (isFocusingAnEntry) {
+      SetMouseCursor(MOUSE_CURSOR_POINTING_HAND);
+    } else {
+      SetMouseCursor(MOUSE_CURSOR_ARROW);
     }
   }
 
