@@ -27,9 +27,6 @@ namespace ui {
   note::~note() {
   }
 
-  bool note::operator>(const note &that) const {
-    return (this->m_border_box.width > that.m_border_box.width) && (this->m_border_box.height > that.m_border_box.height);
-  }
 
   void note::compute_element_coordinates() {
     using namespace raylib;
@@ -69,6 +66,14 @@ namespace ui {
       .height = m_box.height - m_title_bounding_box.height - (4 * m_theme.font_spacing) - m_title_delimiter.height};
   }
 
+  void note::focus() {
+    m_focused = false;
+  }
+
+  void note::unfocus() {
+    m_focused = true;
+  }
+
   // TODO: scrolling
   // TODO: title should be rendered differently
   void note::render() const {
@@ -76,7 +81,7 @@ namespace ui {
     using namespace raylib_helper;
 
     DrawRectangleRec(m_border_box, m_theme.border);
-    DrawRectangleRec(m_box, m_theme.note_background);
+    DrawRectangleRec(m_box, m_theme.object_background);
     DrawRectangleRec(m_title_delimiter, m_theme.border);
 
     render_wrapping_text_in_bounds(m_title, m_title_bounding_box, m_theme);

@@ -60,9 +60,8 @@ namespace ui {
 
       .placeholder = MAROON,
 
-      .note_background = RAYWHITE,
-      .note_foreground = BLACK,
-
+      .object_background = WHITE,
+      .object_foreground = BLACK,
     };
 
     m_background_texture_shader = LoadShader(nullptr, "source/background_pattern.fs");
@@ -82,6 +81,8 @@ namespace ui {
         m_background_shader_grid_tile_size_as_percentage_location == -1) {
       throw std::runtime_error("fucky-wacky happened");
     }
+
+    m_objects.push_back(std::make_unique<single_line_input>(raylib::Rectangle(0, 0, 100, 40), m_theme));
   }
 
   ui::~ui() {
@@ -178,16 +179,12 @@ namespace ui {
         m_state = just_looking;
         m_started_drawing = false;
 
-        m_notes.push_back(note(
+        m_objects.push_back(std::make_unique<note>(
           map_rectangle_into_world_coordinates(
             into_proper_rectangle(m_note_placeholder), m_camera),
           L"sample text"s,
           L"I'd just like to interject for a moment. What you're refering to as Linux, is in fact, GNU/Linux, or as I've recently taken to calling it, GNU plus Linux. Linux is not an operating system unto itself, but rather another free component of a fully functioning GNU system made useful by the GNU corelibs, shell utilities and vital system components comprising a full OS as defined by POSIX.\nMany computer users run a modified version of the GNU system every day, without realizing it. Through a peculiar turn of events, the version of GNU which is widely used today is often called Linux, and many of its users are not aware that it is basically the GNU system, developed by the GNU Project.\n\nThere really is a Linux, and these people are using it, but it is just a part of the system they use. Linux is the kernel: the program in the system that allocates the machine's resources to the other programs that you run. The kernel is an essential part of an operating system, but useless by itself; it can only function in the context of a complete operating system. Linux is normally used in combination with the GNU operating system: the whole system is basically GNU with Linux added, or GNU/Linux. All the so-called Linux distributions are really distributions of GNU/Linux!"s,
           m_theme));
-
-        std::stable_sort(m_notes.begin(), m_notes.end(), [](const note &first, const note &second) {
-          return first > second;
-        });
 
         SetMouseCursor(MOUSE_CURSOR_ARROW);
       } else {
@@ -240,8 +237,8 @@ namespace ui {
 
       BeginMode2D(m_camera);
       {
-        for (const auto &note : m_notes) {
-          note.render();
+        for (const auto &object : m_objects) {
+          object->render();
         }
       }
       EndMode2D();

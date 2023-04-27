@@ -9,8 +9,7 @@ uniform float gridTilePercent;
 uniform sampler2D texture0;
 uniform vec4 colDiffuse;
 
-void main()
-{
+void main() {
   float gridWidth = (screenResolutionAndTopLeftPoint.x * gridTilePercent);
   float gridHeight = (screenResolutionAndTopLeftPoint.y * gridTilePercent);
 

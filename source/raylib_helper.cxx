@@ -78,7 +78,7 @@ namespace raylib_helper {
         break;
       }
 
-      DrawTextCodepoint(theme.font, codepoint, current_position, theme.font_size, theme.note_foreground);
+      DrawTextCodepoint(theme.font, codepoint, current_position, theme.font_size, theme.object_foreground);
     }
   }
 };  // namespace raylib_helper

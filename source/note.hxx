@@ -3,19 +3,20 @@
 #include <compare>
 #include <string>
 
+#include "object.hxx"
 #include "raylib.hxx"
 #include "theme.hxx"
 
 namespace ui {
-  class note {
+  class note : public object {
   public:
-    void render() const;
+    void render() const override;
+    void focus() override;
+    void unfocus() override;
 
     note(raylib::Rectangle box, std::wstring title, std::wstring text, theme theme);
     note(raylib::Rectangle box, theme theme);
     ~note();
-
-    bool operator>(const note &that) const;
 
   private:
     void compute_element_coordinates();
@@ -32,5 +33,6 @@ namespace ui {
     raylib::Rectangle m_text_bounding_box;
 
     theme m_theme;
+    bool m_focused;
   };
 };  // namespace ui

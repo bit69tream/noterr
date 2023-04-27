@@ -5,8 +5,10 @@
 #include <vector>
 
 #include "note.hxx"
+#include "object.hxx"
 #include "popup.hxx"
 #include "raylib.hxx"
+#include "single_line_input.hxx"
 #include "theme.hxx"
 
 namespace ui {
@@ -51,7 +53,7 @@ namespace ui {
     bool m_should_close {false};
 
     raylib::Rectangle m_note_placeholder;
-    std::vector<note> m_notes;
+    std::vector<std::unique_ptr<object>> m_objects;
 
     raylib::Shader m_background_texture_shader;
     raylib::RenderTexture2D m_background_texture_for_shader;

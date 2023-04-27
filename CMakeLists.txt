@@ -36,7 +36,8 @@ add_executable(${PROJECT_NAME}
   source/ui.cxx
   source/popup.cxx
   source/raylib_helper.cxx
-  source/note.cxx)
+  source/note.cxx
+  source/single_line_input.cxx)
 set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
 

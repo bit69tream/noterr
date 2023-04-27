@@ -22,7 +22,7 @@ namespace ui {
 
     raylib::Color placeholder;
 
-    raylib::Color note_background;
-    raylib::Color note_foreground;
+    raylib::Color object_background;
+    raylib::Color object_foreground;
   };
 };  // namespace ui
