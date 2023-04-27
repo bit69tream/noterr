@@ -15,7 +15,7 @@ namespace ui {
   enum class state {
     just_looking,
     popup_menu,
-    drawing_new_object,
+    drawing_new_note,
     focused_on_object,
   };
 

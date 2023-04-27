@@ -144,75 +144,77 @@ namespace ui {
     const Vector2 mouse_position = GetMousePosition();
     const Vector2 mouse_position_in_the_world = GetScreenToWorld2D(mouse_position, m_camera);
 
-    if (m_state == focused_on_object && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-      auto &object = m_objects.back();
-
-      if (!object->can_focus(mouse_position_in_the_world)) {
-        object->unfocus();
-        m_state = just_looking;
-      }
-    }
-
-    if (m_state == just_looking && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-      for (auto it = m_objects.rbegin(); it != m_objects.rend(); it++) {
-        if ((*it)->can_focus(mouse_position_in_the_world)) {
-          (*it)->focus(mouse_position_in_the_world);
-          m_state = focused_on_object;
-          // put focused object at the end of the vector so it renders on top of everything
-          std::swap(*it, m_objects.back());
+    switch (m_state) {
+      case popup_menu: {
+        if (!IsMouseButtonReleased(MOUSE_BUTTON_RIGHT)) {
           break;
         }
-      }
-    }
-
-    if (m_state == just_looking && IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
-      using namespace std;
-
-      m_state = popup_menu;
-      m_popup = make_unique<popup>(
-        vector<tuple<string_view, popup_actions>> {
-          make_tuple("Restore zoom", popup_actions::restore_zoom),
-          make_tuple("New note", popup_actions::create_new_note),
-          make_tuple("Quit", popup_actions::quit),
-        },
-        GetMousePosition(), m_theme);
-    }
-
-    if (m_state == popup_menu && IsMouseButtonReleased(MOUSE_BUTTON_RIGHT)) {
-      m_state = just_looking;
-      SetMouseCursor(MOUSE_CURSOR_ARROW);
-      auto maybe_action = m_popup->get_action();
-      if (maybe_action.has_value()) {
-        execute_popup_action(maybe_action.value());
-      }
-      delete m_popup.release();
-    }
-
-    if (m_state == drawing_new_object) {
-      if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
-        m_note_placeholder.x = mouse_position.x;
-        m_note_placeholder.y = mouse_position.y;
-        m_note_placeholder.width = m_note_placeholder.height = 0;
-        m_started_drawing = true;
-      } else if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT) && m_started_drawing) {
-        using namespace raylib_helper;
-        using namespace std::literals;
 
         m_state = just_looking;
-        m_started_drawing = false;
-
-        m_objects.push_back(std::make_unique<note>(
-          map_rectangle_into_world_coordinates(
-            into_proper_rectangle(m_note_placeholder), m_camera),
-          L"sample text"s,
-          L"I'd just like to interject for a moment. What you're refering to as Linux, is in fact, GNU/Linux, or as I've recently taken to calling it, GNU plus Linux. Linux is not an operating system unto itself, but rather another free component of a fully functioning GNU system made useful by the GNU corelibs, shell utilities and vital system components comprising a full OS as defined by POSIX.\nMany computer users run a modified version of the GNU system every day, without realizing it. Through a peculiar turn of events, the version of GNU which is widely used today is often called Linux, and many of its users are not aware that it is basically the GNU system, developed by the GNU Project.\n\nThere really is a Linux, and these people are using it, but it is just a part of the system they use. Linux is the kernel: the program in the system that allocates the machine's resources to the other programs that you run. The kernel is an essential part of an operating system, but useless by itself; it can only function in the context of a complete operating system. Linux is normally used in combination with the GNU operating system: the whole system is basically GNU with Linux added, or GNU/Linux. All the so-called Linux distributions are really distributions of GNU/Linux!"s,
-          m_theme));
-
         SetMouseCursor(MOUSE_CURSOR_ARROW);
-      } else {
-        m_note_placeholder.width = mouse_position.x - m_note_placeholder.x;
-        m_note_placeholder.height = mouse_position.y - m_note_placeholder.y;
-      }
+
+        auto maybe_action = m_popup->get_action();
+        if (!maybe_action.has_value()) {
+          break;
+        }
+
+        execute_popup_action(maybe_action.value());
+        delete m_popup.release();
+      } break;
+      case drawing_new_note: {
+        if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
+          m_started_drawing = true;
+
+          m_note_placeholder.x = mouse_position.x;
+          m_note_placeholder.y = mouse_position.y;
+          m_note_placeholder.width = m_note_placeholder.height = 0;
+        } else if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT) && m_started_drawing) {
+          using namespace raylib_helper;
+
+          m_state = just_looking;
+          m_started_drawing = false;
+
+          SetMouseCursor(MOUSE_CURSOR_ARROW);
+
+          m_objects.push_back(std::make_unique<note>(map_rectangle_into_world_coordinates(into_proper_rectangle(m_note_placeholder), m_camera), m_theme));
+        } else {
+          m_note_placeholder.width = mouse_position.x - m_note_placeholder.x;
+          m_note_placeholder.height = mouse_position.y - m_note_placeholder.y;
+        }
+      } break;
+      case just_looking:
+      case focused_on_object: {
+        bool is_any_mouse_button_pressed = IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE);
+        if (is_any_mouse_button_pressed) {
+          for (auto it = m_objects.rbegin(); it != m_objects.rend(); it++) {
+            if ((*it)->can_focus(mouse_position_in_the_world)) {
+              m_objects.back()->unfocus();  // unfocus current focused thing
+
+              (*it)->focus(mouse_position_in_the_world);
+              m_state = focused_on_object;
+              // put focused object at the end of the vector so it renders on top of everything
+              std::swap(*it, m_objects.back());
+              goto after_processing_focus;
+            }
+          }
+
+          m_state = just_looking;
+        }
+after_processing_focus:
+
+        if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
+          using namespace std;
+
+          m_state = popup_menu;
+          m_popup = make_unique<popup>(
+            vector<tuple<string_view, popup_actions>> {
+              make_tuple("Restore zoom", popup_actions::restore_zoom),
+              make_tuple("New note", popup_actions::create_new_note),
+              make_tuple("Quit", popup_actions::quit),
+            },
+            GetMousePosition(), m_theme);
+        }
+      } break;
     }
   }
 
@@ -225,7 +227,7 @@ namespace ui {
         break;
       case create_new_note:
         raylib::SetMouseCursor(raylib::MOUSE_CURSOR_RESIZE_ALL);
-        m_state = state::drawing_new_object;
+        m_state = state::drawing_new_note;
         break;
       case restore_zoom:
         m_camera.zoom = 1.0f;
@@ -266,7 +268,7 @@ namespace ui {
 
       if (m_state == popup_menu) {
         m_popup->render();
-      } else if (m_state == drawing_new_object && m_started_drawing) {
+      } else if (m_state == drawing_new_note && m_started_drawing) {
         DrawRectangleRec(raylib_helper::into_proper_rectangle(m_note_placeholder),
                          m_theme.placeholder);
       }
