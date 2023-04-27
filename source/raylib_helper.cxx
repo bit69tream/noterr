@@ -42,8 +42,8 @@ namespace raylib_helper {
   }
 
   // NOTE: this is slow af
-  void render_wrapping_text_in_bounds(std::wstring_view text, Rectangle bounding_box, ui::theme theme) {
-    const float initial_x_position = bounding_box.x + theme.font_spacing;
+  void render_wrapping_text_in_bounds(std::wstring_view text, Rectangle bounding_box, const ui::theme &theme) {
+    const float initial_x_position = bounding_box.x + theme.glyph_spacing;
 
     float current_line_max_glyph_height = 0;
     Vector2 next_position = {.x = initial_x_position, .y = bounding_box.y};
@@ -61,7 +61,7 @@ namespace raylib_helper {
       }
 
       Vector2 current_position = next_position;
-      next_position.x += glyph_box.width + theme.font_spacing;
+      next_position.x += glyph_box.width + theme.glyph_spacing;
 
       bool is_inside_of_bounding_box = CheckCollisionPointRec(next_position, bounding_box);
       if (!is_inside_of_bounding_box) {
@@ -70,7 +70,7 @@ namespace raylib_helper {
         current_line_max_glyph_height = glyph_box.height;
 
         next_position = current_position;
-        next_position.x += glyph_box.width + theme.font_spacing;
+        next_position.x += glyph_box.width + theme.glyph_spacing;
       }
 
       bool cannot_be_put_inside_bounding_box = (current_position.y + glyph_box.height) >= (bounding_box.y + bounding_box.height);
@@ -80,5 +80,29 @@ namespace raylib_helper {
 
       DrawTextCodepoint(theme.font, codepoint, current_position, theme.font_size, theme.object_foreground);
     }
+  }
+
+  Rectangle subtract_border_from_rectangle(Rectangle rectangle, const ui::theme &theme) {
+    rectangle.x += theme.border_size;
+    rectangle.y += theme.border_size;
+    rectangle.width -= theme.border_size * 2;
+    rectangle.height -= theme.border_size * 2;
+
+    return rectangle;
+  }
+
+  Vector2 get_line_dimensions(std::wstring_view line, const ui::theme &theme) {
+    float width = 0;
+    float height = 0;
+
+    for (const auto &codepoint : line) {
+      int glyph_index = raylib::GetGlyphIndex(theme.font, codepoint);
+      const auto &glyph_rectangle = theme.font.recs[glyph_index];
+      width += glyph_rectangle.width + theme.glyph_spacing;
+      height = std::max(height, glyph_rectangle.height);
+    }
+    width -= theme.glyph_spacing;
+
+    return {.x = width, .y = height};
   }
 };  // namespace raylib_helper

@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include <string_view>
 
 #include "note.hxx"
@@ -7,19 +8,18 @@
 
 namespace ui {
   // TODO: minimal placeholder and note size
-  note::note(raylib::Rectangle box, std::wstring title, std::wstring text,
-             theme theme)
-      : m_box(box),
-        m_border_box(box),
+  note::note(raylib::Rectangle bounding_box, std::wstring title, std::wstring text, const theme &theme)
+      : m_bounding_box(bounding_box),
+        m_border_box(bounding_box),
         m_title(std::move(title)),
         m_text(std::move(text)),
         m_theme(theme) {
     compute_element_coordinates();
   }
 
-  note::note(raylib::Rectangle box, theme theme)
-      : m_box(box),
-        m_border_box(box),
+  note::note(raylib::Rectangle bounding_box, const theme &theme)
+      : m_bounding_box(bounding_box),
+        m_border_box(bounding_box),
         m_theme(theme) {
     compute_element_coordinates();
   }
@@ -27,14 +27,10 @@ namespace ui {
   note::~note() {
   }
 
-
   void note::compute_element_coordinates() {
     using namespace raylib;
 
-    m_box.x += m_theme.border_size;
-    m_box.y += m_theme.border_size;
-    m_box.width -= m_theme.border_size * 2;
-    m_box.height -= m_theme.border_size * 2;
+    m_bounding_box = raylib_helper::subtract_border_from_rectangle(m_border_box, m_theme);
 
     float title_text_height = 0;
     for (auto codepoint : m_title) {
@@ -46,32 +42,37 @@ namespace ui {
     }
 
     m_title_bounding_box = Rectangle {
-      .x = m_box.x + m_theme.font_spacing,
-      .y = m_box.y + m_theme.font_spacing,
-      .width = m_box.width - (2 * m_theme.font_spacing),
-      .height = title_text_height + m_theme.font_spacing,
+      .x = m_bounding_box.x + m_theme.glyph_spacing,
+      .y = m_bounding_box.y + m_theme.glyph_spacing,
+      .width = m_bounding_box.width - (2 * m_theme.glyph_spacing),
+      .height = title_text_height + m_theme.glyph_spacing,
     };
 
     m_title_delimiter = Rectangle {
-      .x = m_box.x + m_theme.border_size,
+      .x = m_bounding_box.x + m_theme.border_size,
       .y = m_title_bounding_box.y + m_title_bounding_box.height,
-      .width = m_box.width - (m_theme.border_size * 2),
+      .width = m_bounding_box.width - (m_theme.border_size * 2),
       .height = m_theme.border_size,
     };
 
     m_text_bounding_box = Rectangle {
-      .x = m_box.x + m_theme.font_spacing,
-      .y = m_title_delimiter.y + m_title_delimiter.height + m_theme.font_spacing,
-      .width = m_box.width - (2 * m_theme.font_spacing),
-      .height = m_box.height - m_title_bounding_box.height - (4 * m_theme.font_spacing) - m_title_delimiter.height};
+      .x = m_bounding_box.x + m_theme.glyph_spacing,
+      .y = m_title_delimiter.y + m_title_delimiter.height + m_theme.glyph_spacing,
+      .width = m_bounding_box.width - (2 * m_theme.glyph_spacing),
+      .height = m_bounding_box.height - m_title_bounding_box.height - (4 * m_theme.glyph_spacing) - m_title_delimiter.height};
   }
 
-  void note::focus() {
-    m_focused = false;
+  void note::focus(raylib::Vector2 point) {
+    (void)point;
+    m_focused = true;
   }
 
   void note::unfocus() {
-    m_focused = true;
+    m_focused = false;
+  }
+
+  bool note::can_focus(raylib::Vector2 point) const {
+    return CheckCollisionPointRec(point, m_bounding_box);
   }
 
   // TODO: scrolling
@@ -81,7 +82,7 @@ namespace ui {
     using namespace raylib_helper;
 
     DrawRectangleRec(m_border_box, m_theme.border);
-    DrawRectangleRec(m_box, m_theme.object_background);
+    DrawRectangleRec(m_bounding_box, m_theme.object_background);
     DrawRectangleRec(m_title_delimiter, m_theme.border);
 
     render_wrapping_text_in_bounds(m_title, m_title_bounding_box, m_theme);

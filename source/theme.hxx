@@ -5,7 +5,8 @@
 namespace ui {
   struct theme {
     float font_size;
-    float font_spacing;
+    float glyph_spacing;
+    float line_spacing;
     raylib::Font font;
 
     raylib::Color background;

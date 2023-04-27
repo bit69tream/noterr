@@ -1,55 +1,38 @@
-#include "single_line_input.hxx"
-#include "raylib.hxx"
 #include <algorithm>
 #include <memory>
+#include <stdexcept>
+
+#include "raylib.hxx"
+#include "raylib_helper.hxx"
+#include "single_line_input.hxx"
 
 namespace ui {
-  single_line_input::single_line_input(raylib::Rectangle bounding_box, theme theme, bool center_text)
-      : m_bounding_box(bounding_box),
-        m_border_box(bounding_box),
+  single_line_input::single_line_input(raylib::Rectangle bounding_box, const theme &theme, bool center_text)
+      : m_border_box(bounding_box),
         m_theme(theme),
         m_center_text(center_text) {
-    m_bounding_box.x += m_theme.border_size;
-    m_bounding_box.y += m_theme.border_size;
-    m_bounding_box.width -= m_theme.border_size * 2;
-    m_bounding_box.height -= m_theme.border_size * 2;
+    m_bounding_box = raylib_helper::subtract_border_from_rectangle(m_border_box, m_theme);
   }
 
-
-  single_line_input::single_line_input(std::wstring text, raylib::Rectangle bounding_box, theme theme, bool center_text)
+  single_line_input::single_line_input(std::wstring text, raylib::Rectangle bounding_box, const theme &theme, bool center_text)
       : m_bounding_box(bounding_box),
         m_theme(theme),
         m_center_text(center_text),
         m_text(std::move(text)) {
-    calculate_text_dimensions();
+    m_text_dimensions = raylib_helper::get_line_dimensions(m_text, m_theme);
   }
 
-
-  single_line_input::~single_line_input() {
+  bool single_line_input::can_focus(raylib::Vector2 point) const {
+    return CheckCollisionPointRec(point, m_bounding_box);
   }
 
-  void single_line_input::calculate_text_dimensions() {
-    float width = 0;
-    float max_glyph_hight = 0;
-
-    for (auto codepoint : m_text) {
-      int glyph_index = raylib::GetGlyphIndex(m_theme.font, codepoint);
-      auto &glyph_rectangle = m_theme.font.recs[glyph_index];
-      width += glyph_rectangle.width + m_theme.font_spacing;
-      max_glyph_hight = std::max(max_glyph_hight, glyph_rectangle.height);
-    }
-    width -= m_theme.font_spacing;
-
-    m_text_dimensions.x = width;
-    m_text_dimensions.y = max_glyph_hight;
-  }
-
-  void single_line_input::focus() {
-    m_focused = false;
+  void single_line_input::focus(raylib::Vector2 point) {
+    (void)point;
+    m_focused = true;
   }
 
   void single_line_input::unfocus() {
-    m_focused = true;
+    m_focused = false;
   }
 
   void single_line_input::render() const {

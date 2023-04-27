@@ -15,12 +15,13 @@ namespace ui {
   enum class state {
     just_looking,
     popup_menu,
-    drawing_new_note,
+    drawing_new_object,
+    focused_on_object,
   };
 
   class ui {
   public:
-    ui(std::filesystem::path file_path);
+    explicit ui(std::filesystem::path file_path);
     ~ui();
 
     void main_loop();
@@ -34,6 +35,7 @@ namespace ui {
 
     void execute_popup_action(popup_actions action);
 
+    void pass_input_events_to_focused_object();
 
   private:
     std::filesystem::path m_file_path;
@@ -59,6 +61,5 @@ namespace ui {
     raylib::RenderTexture2D m_background_texture_for_shader;
     int m_background_shader_screen_resolution_location;
     int m_background_shader_grid_tile_size_as_percentage_location;
-    int m_background_shader_zoom_location;
   };
 };  // namespace ui

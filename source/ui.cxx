@@ -43,7 +43,8 @@ namespace ui {
     // TODO: load themes from config file
     m_theme = theme {
       .font_size = font_size,
-      .font_spacing = 2,
+      .glyph_spacing = 2,
+      .line_spacing = 0,
       .font = LoadFontEx("TimesNewerRoman-Regular.otf", font_size, nullptr, unicode_cyrillic_range_end),
 
       .background = WHITE,
@@ -75,14 +76,13 @@ namespace ui {
 
     m_background_shader_screen_resolution_location = GetShaderLocation(m_background_texture_shader, "screenResolutionAndTopLeftPoint");
     m_background_shader_grid_tile_size_as_percentage_location = GetShaderLocation(m_background_texture_shader, "gridTilePercent");
-    // m_background_shader_zoom_location = GetShaderLocation(m_background_texture_shader, "zoom");
 
     if (m_background_shader_screen_resolution_location == -1 ||
         m_background_shader_grid_tile_size_as_percentage_location == -1) {
       throw std::runtime_error("fucky-wacky happened");
     }
 
-    m_objects.push_back(std::make_unique<single_line_input>(raylib::Rectangle(0, 0, 100, 40), m_theme));
+    m_objects.push_back(std::make_unique<single_line_input>(raylib::Rectangle {0, 0, 100, 40}, m_theme));
   }
 
   ui::~ui() {
@@ -142,6 +142,28 @@ namespace ui {
     using enum state;
 
     const Vector2 mouse_position = GetMousePosition();
+    const Vector2 mouse_position_in_the_world = GetScreenToWorld2D(mouse_position, m_camera);
+
+    if (m_state == focused_on_object && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+      auto &object = m_objects.back();
+
+      if (!object->can_focus(mouse_position_in_the_world)) {
+        object->unfocus();
+        m_state = just_looking;
+      }
+    }
+
+    if (m_state == just_looking && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+      for (auto it = m_objects.rbegin(); it != m_objects.rend(); it++) {
+        if ((*it)->can_focus(mouse_position_in_the_world)) {
+          (*it)->focus(mouse_position_in_the_world);
+          m_state = focused_on_object;
+          // put focused object at the end of the vector so it renders on top of everything
+          std::swap(*it, m_objects.back());
+          break;
+        }
+      }
+    }
 
     if (m_state == just_looking && IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
       using namespace std;
@@ -166,7 +188,7 @@ namespace ui {
       delete m_popup.release();
     }
 
-    if (m_state == drawing_new_note) {
+    if (m_state == drawing_new_object) {
       if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
         m_note_placeholder.x = mouse_position.x;
         m_note_placeholder.y = mouse_position.y;
@@ -203,7 +225,7 @@ namespace ui {
         break;
       case create_new_note:
         raylib::SetMouseCursor(raylib::MOUSE_CURSOR_RESIZE_ALL);
-        m_state = state::drawing_new_note;
+        m_state = state::drawing_new_object;
         break;
       case restore_zoom:
         m_camera.zoom = 1.0f;
@@ -227,7 +249,6 @@ namespace ui {
 
       SetShaderValue(m_background_texture_shader, m_background_shader_screen_resolution_location, &screen_resolution_and_top_left_world_point, SHADER_UNIFORM_VEC4);
       SetShaderValue(m_background_texture_shader, m_background_shader_grid_tile_size_as_percentage_location, &m_theme.grid_tile_size_as_percentage, SHADER_UNIFORM_FLOAT);
-      // SetShaderValue(m_background_texture_shader, m_background_shader_zoom_location, &m_camera.zoom, SHADER_UNIFORM_FLOAT);
 
       BeginShaderMode(m_background_texture_shader);
       {
@@ -245,7 +266,7 @@ namespace ui {
 
       if (m_state == popup_menu) {
         m_popup->render();
-      } else if (m_state == drawing_new_note && m_started_drawing) {
+      } else if (m_state == drawing_new_object && m_started_drawing) {
         DrawRectangleRec(raylib_helper::into_proper_rectangle(m_note_placeholder),
                          m_theme.placeholder);
       }
@@ -255,11 +276,18 @@ namespace ui {
     EndDrawing();
   }
 
+  void ui::pass_input_events_to_focused_object() {
+  }
+
   void ui::main_loop() {
     while (!raylib::WindowShouldClose() && !m_should_close) {
       update_window_size();
       update_camera();
       update_ui_state();
+
+      if (m_state == state::focused_on_object) {
+        pass_input_events_to_focused_object();
+      }
 
       render();
     }

@@ -9,17 +9,13 @@
 namespace ui {
   class single_line_input : public object {
   public:
-    single_line_input(raylib::Rectangle bounding_box, theme theme, bool center_text = false);
-    single_line_input(std::wstring text, raylib::Rectangle bounding_box, theme theme, bool center_text = false);
-
-    ~single_line_input();
+    single_line_input(raylib::Rectangle bounding_box, const theme &theme, bool center_text = false);
+    single_line_input(std::wstring text, raylib::Rectangle bounding_box, const theme &theme, bool center_text = false);
 
     void render() const override;
-    void focus() override;
+    void focus(raylib::Vector2 point) override;
     void unfocus() override;
-
-  private:
-    void calculate_text_dimensions();
+    bool can_focus(raylib::Vector2 point) const override;
 
   private:
     raylib::Rectangle m_bounding_box;
@@ -28,6 +24,6 @@ namespace ui {
     bool m_center_text;
     std::wstring m_text;
     raylib::Vector2 m_text_dimensions;
-    bool m_focused;
+    bool m_focused {false};
   };
 }  // namespace ui

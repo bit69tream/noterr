@@ -11,21 +11,22 @@ namespace ui {
   class note : public object {
   public:
     void render() const override;
-    void focus() override;
+    void focus(raylib::Vector2 point) override;
     void unfocus() override;
+    bool can_focus(raylib::Vector2 point) const override;
 
-    note(raylib::Rectangle box, std::wstring title, std::wstring text, theme theme);
-    note(raylib::Rectangle box, theme theme);
+    note(raylib::Rectangle bounding_box, std::wstring title, std::wstring text, const theme &theme);
+    note(raylib::Rectangle bounding_box, const theme &theme);
     ~note();
 
   private:
     void compute_element_coordinates();
 
-    raylib::Rectangle m_box, m_border_box;
-
+  private:
+    raylib::Rectangle m_bounding_box;
+    raylib::Rectangle m_border_box;
     raylib::Rectangle m_title_delimiter;
 
-  private:
     std::wstring m_title;
     raylib::Rectangle m_title_bounding_box;
 
@@ -33,6 +34,6 @@ namespace ui {
     raylib::Rectangle m_text_bounding_box;
 
     theme m_theme;
-    bool m_focused;
+    bool m_focused {false};
   };
 };  // namespace ui
