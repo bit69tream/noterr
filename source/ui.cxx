@@ -235,25 +235,30 @@ after_processing_focus:
     }
   }
 
+  void ui::draw_background_with_grid_pattern() {
+    using namespace raylib;
+    ClearBackground(m_theme.grid_color);
+
+    Vector2 top_left_world_point = GetScreenToWorld2D({0, 0}, m_camera);
+    Vector4 screen_resolution_and_top_left_world_point = {m_width, m_height, top_left_world_point.x, top_left_world_point.y};
+
+    SetShaderValue(m_background_texture_shader, m_background_shader_screen_resolution_location, &screen_resolution_and_top_left_world_point, SHADER_UNIFORM_VEC4);
+    SetShaderValue(m_background_texture_shader, m_background_shader_grid_tile_size_as_percentage_location, &m_theme.grid_tile_size_as_percentage, SHADER_UNIFORM_FLOAT);
+
+    BeginShaderMode(m_background_texture_shader);
+    {
+      DrawTexture(m_background_texture_for_shader.texture, 0, 0, WHITE);
+    }
+    EndShaderMode();
+  }
+
   void ui::render() {
     using namespace raylib;
     using enum state;
 
     BeginDrawing();
     {
-      ClearBackground(m_theme.grid_color);
-
-      Vector2 top_left_world_point = GetScreenToWorld2D({0, 0}, m_camera);
-      Vector4 screen_resolution_and_top_left_world_point = {m_width, m_height, top_left_world_point.x, top_left_world_point.y};
-
-      SetShaderValue(m_background_texture_shader, m_background_shader_screen_resolution_location, &screen_resolution_and_top_left_world_point, SHADER_UNIFORM_VEC4);
-      SetShaderValue(m_background_texture_shader, m_background_shader_grid_tile_size_as_percentage_location, &m_theme.grid_tile_size_as_percentage, SHADER_UNIFORM_FLOAT);
-
-      BeginShaderMode(m_background_texture_shader);
-      {
-        DrawTexture(m_background_texture_for_shader.texture, 0, 0, WHITE);
-      }
-      EndShaderMode();
+      draw_background_with_grid_pattern();
 
       BeginMode2D(m_camera);
       {
@@ -266,8 +271,7 @@ after_processing_focus:
       if (m_state == popup_menu) {
         m_popup->render();
       } else if (m_state == drawing_new_note && m_started_drawing) {
-        DrawRectangleRec(raylib_helper::into_proper_rectangle(m_note_placeholder),
-                         m_theme.placeholder);
+        DrawRectangleRec(raylib_helper::into_proper_rectangle(m_note_placeholder), m_theme.placeholder);
       }
 
       DrawFPS(0, 0);

@@ -31,6 +31,7 @@ namespace ui {
     void update_camera();
     void update_ui_state();
 
+    void draw_background_with_grid_pattern();
     void render();
 
     void execute_popup_action(popup_actions action);
