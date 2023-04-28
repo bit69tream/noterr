@@ -3,6 +3,7 @@
 #include <compare>
 #include <string>
 
+#include "event.hxx"
 #include "object.hxx"
 #include "raylib.hxx"
 #include "theme.hxx"
@@ -11,9 +12,8 @@ namespace ui {
   class note : public object {
   public:
     void render() const override;
-    void focus(raylib::Vector2 point) override;
-    void unfocus() override;
     bool can_focus(raylib::Vector2 point) const override;
+    void send_events(std::span<event> events) override;
 
     note(raylib::Rectangle bounding_box, std::wstring title, std::wstring text, const theme &theme);
     note(raylib::Rectangle bounding_box, const theme &theme);

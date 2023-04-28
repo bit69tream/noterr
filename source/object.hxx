@@ -1,5 +1,8 @@
 #pragma once
 
+#include <span>
+
+#include "event.hxx"
 #include "raylib.hxx"
 
 namespace ui {
@@ -7,7 +10,6 @@ namespace ui {
   public:
     virtual void render() const = 0;
     virtual bool can_focus(raylib::Vector2 point) const = 0;
-    virtual void focus(raylib::Vector2 point) = 0;
-    virtual void unfocus() = 0;
+    virtual void send_events(std::span<event> events) = 0;
   };
 };  // namespace ui

@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <memory>
+#include <span>
 #include <stdexcept>
 
 #include "raylib.hxx"
@@ -26,19 +27,14 @@ namespace ui {
     return CheckCollisionPointRec(point, m_bounding_box);
   }
 
-  void single_line_input::focus(raylib::Vector2 point) {
-    (void)point;
-    m_focused = true;
-  }
-
-  void single_line_input::unfocus() {
-    m_focused = false;
-  }
-
   void single_line_input::render() const {
     using namespace raylib;
 
     DrawRectangleRec(m_border_box, m_theme.border);
     DrawRectangleRec(m_bounding_box, m_theme.object_background);
+  }
+
+  void single_line_input::send_events(std::span<event> events) {
+    (void)events;
   }
 }  // namespace ui

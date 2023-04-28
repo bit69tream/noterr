@@ -15,18 +15,12 @@ int main(int command_line_arguments_length, char *command_line_arguments[]) {
 
   const std::filesystem::path todo_extension(".todo");
   if (file_path.extension() != todo_extension) {
-    std::cerr << "Error: provided file is not of a .todo extension."
-              << std::endl;
+    std::cerr << "Error: provided file is not of a .todo extension." << std::endl;
     return 1;
   }
 
   ui::ui ui(file_path);
-  try {
-    ui.main_loop();
-  } catch (const std::exception &e) {
-    std::cerr << "Error: " << e.what() << std::endl;
-    return 1;
-  }
+  ui.main_loop();
 
   return 0;
 }

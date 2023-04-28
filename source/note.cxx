@@ -1,3 +1,5 @@
+#include <iostream>
+#include <span>
 #include <stdexcept>
 #include <string_view>
 
@@ -59,20 +61,24 @@ namespace ui {
       .x = m_bounding_box.x + m_theme.glyph_spacing,
       .y = m_title_delimiter.y + m_title_delimiter.height + m_theme.glyph_spacing,
       .width = m_bounding_box.width - (2 * m_theme.glyph_spacing),
-      .height = m_bounding_box.height - m_title_bounding_box.height - (4 * m_theme.glyph_spacing) - m_title_delimiter.height};
-  }
-
-  void note::focus(raylib::Vector2 point) {
-    (void)point;
-    m_focused = true;
-  }
-
-  void note::unfocus() {
-    m_focused = false;
+      .height = m_bounding_box.height - m_title_bounding_box.height - (4 * m_theme.glyph_spacing) - m_title_delimiter.height,
+    };
   }
 
   bool note::can_focus(raylib::Vector2 point) const {
     return CheckCollisionPointRec(point, m_bounding_box);
+  }
+
+  void note::send_events(std::span<event> events) {
+    for (const auto &event : events) {
+      if (std::holds_alternative<mouse_click_event>(event)) {
+        auto mouse_event = std::get<mouse_click_event>(event);
+        std::wcout << L"mouse click event!!!!! (" << mouse_event.point.x << L", " << mouse_event.point.y << L")" << std::endl;
+      } else if (std::holds_alternative<keyboard_key_press_event>(event)) {
+        auto keyboard_event = std::get<keyboard_key_press_event>(event);
+        std::wcout << L"key: " << keyboard_event.codepoint << std::endl;
+      }
+    }
   }
 
   // TODO: scrolling

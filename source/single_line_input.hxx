@@ -1,7 +1,9 @@
 #pragma once
 
+#include <span>
 #include <string>
 
+#include "event.hxx"
 #include "object.hxx"
 #include "raylib.hxx"
 #include "theme.hxx"
@@ -13,9 +15,8 @@ namespace ui {
     single_line_input(std::wstring text, raylib::Rectangle bounding_box, const theme &theme, bool center_text = false);
 
     void render() const override;
-    void focus(raylib::Vector2 point) override;
-    void unfocus() override;
     bool can_focus(raylib::Vector2 point) const override;
+    void send_events(std::span<event> events) override;
 
   private:
     raylib::Rectangle m_bounding_box;

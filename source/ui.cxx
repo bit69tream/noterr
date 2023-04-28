@@ -188,9 +188,6 @@ namespace ui {
         if (is_any_mouse_button_pressed) {
           for (auto it = m_objects.rbegin(); it != m_objects.rend(); it++) {
             if ((*it)->can_focus(mouse_position_in_the_world)) {
-              m_objects.back()->unfocus();  // unfocus current focused thing
-
-              (*it)->focus(mouse_position_in_the_world);
               m_state = focused_on_object;
               // put focused object at the end of the vector so it renders on top of everything
               std::swap(*it, m_objects.back());
@@ -279,6 +276,37 @@ after_processing_focus:
   }
 
   void ui::pass_input_events_to_focused_object() {
+    using namespace raylib;
+
+    if (m_state != state::focused_on_object) {
+      throw std::logic_error("`pass_input_events_to_focused_object` function should only be called when something is in focus.");
+    }
+
+    keyboard_key_press_event keyboard_event;
+    keyboard_event.key = static_cast<KeyboardKey>(GetKeyPressed());
+    keyboard_event.codepoint = GetCharPressed();
+
+    mouse_click_event mouse_event;
+    mouse_event.point = GetScreenToWorld2D(GetMousePosition(), m_camera);
+
+    bool has_any_keyboard_key_been_pressed = keyboard_event.key != 0 || keyboard_event.codepoint != 0;
+    bool has_left_mouse_button_been_pressed = IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
+
+    if (!has_any_keyboard_key_been_pressed && !has_left_mouse_button_been_pressed) {
+      return;
+    }
+
+    std::vector<event> events;
+
+    if (has_any_keyboard_key_been_pressed) {
+      events.push_back(keyboard_event);
+    }
+
+    if (has_left_mouse_button_been_pressed) {
+      events.push_back(mouse_event);
+    }
+
+    m_objects.back()->send_events(events);
   }
 
   void ui::main_loop() {
