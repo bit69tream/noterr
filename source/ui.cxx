@@ -22,7 +22,7 @@ namespace ui {
 #endif
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    InitWindow((int)m_width, (int)m_height, "todo");
+    InitWindow(static_cast<int>(m_width), static_cast<int>(m_height), "todo");
     SetExitKey(KEY_NULL);
 
     SetWindowTitle(m_file_path.filename().c_str());
@@ -61,28 +61,21 @@ namespace ui {
 
       .placeholder = MAROON,
 
-      .object_background = WHITE,
-      .object_foreground = BLACK,
+      .entity_background = WHITE,
+      .entity_foreground = BLACK,
     };
 
     m_background_texture_shader = LoadShader(nullptr, "source/background_pattern.fs");
-
-    m_background_texture_for_shader = LoadRenderTexture((int)m_width, (int)m_height);
-    BeginTextureMode(m_background_texture_for_shader);
-    {
-      DrawRectangle(0, 0, (int)m_width, (int)m_height, m_theme.background);
-    }
-    EndTextureMode();
 
     m_background_shader_screen_resolution_location = GetShaderLocation(m_background_texture_shader, "screenResolutionAndTopLeftPoint");
     m_background_shader_grid_tile_size_as_percentage_location = GetShaderLocation(m_background_texture_shader, "gridTilePercent");
 
     if (m_background_shader_screen_resolution_location == -1 ||
         m_background_shader_grid_tile_size_as_percentage_location == -1) {
-      throw std::runtime_error("fucky-wacky happened");
+      throw std::runtime_error("fucky-wucky happened");
     }
 
-    m_objects.push_back(std::make_unique<single_line_input>(raylib::Rectangle {0, 0, 100, 40}, m_theme));
+    m_entities.push_back(std::make_unique<single_line_input>(raylib::Rectangle {0, 0, 100, 40}, m_theme));
   }
 
   ui::~ui() {
@@ -105,10 +98,10 @@ namespace ui {
       m_height = new_height;
 
       UnloadRenderTexture(m_background_texture_for_shader);
-      m_background_texture_for_shader = LoadRenderTexture((int)m_width, (int)m_height);
+      m_background_texture_for_shader = LoadRenderTexture(static_cast<int>(m_width), static_cast<int>(m_height));
       BeginTextureMode(m_background_texture_for_shader);
       {
-        DrawRectangle(0, 0, (int)m_width, (int)m_height, m_theme.background);
+        DrawRectangle(0, 0, static_cast<int>(m_width), static_cast<int>(m_height), m_theme.background);
       }
       EndTextureMode();
     }
@@ -176,21 +169,21 @@ namespace ui {
 
           SetMouseCursor(MOUSE_CURSOR_ARROW);
 
-          m_objects.push_back(std::make_unique<note>(map_rectangle_into_world_coordinates(into_proper_rectangle(m_note_placeholder), m_camera), m_theme));
+          m_entities.push_back(std::make_unique<note>(map_rectangle_into_world_coordinates(into_proper_rectangle(m_note_placeholder), m_camera), m_theme));
         } else {
           m_note_placeholder.width = mouse_position.x - m_note_placeholder.x;
           m_note_placeholder.height = mouse_position.y - m_note_placeholder.y;
         }
       } break;
       case just_looking:
-      case focused_on_object: {
+      case focused_on_entity: {
         bool is_any_mouse_button_pressed = IsMouseButtonPressed(MOUSE_BUTTON_LEFT) || IsMouseButtonPressed(MOUSE_BUTTON_RIGHT) || IsMouseButtonPressed(MOUSE_BUTTON_MIDDLE);
         if (is_any_mouse_button_pressed) {
-          for (auto it = m_objects.rbegin(); it != m_objects.rend(); it++) {
+          for (auto it = m_entities.rbegin(); it != m_entities.rend(); it++) {
             if ((*it)->can_focus(mouse_position_in_the_world)) {
-              m_state = focused_on_object;
-              // put focused object at the end of the vector so it renders on top of everything
-              std::swap(*it, m_objects.back());
+              m_state = focused_on_entity;
+              // put focused entity at the end of the vector so it renders on top of everything
+              std::swap(*it, m_entities.back());
               goto after_processing_focus;
             }
           }
@@ -262,8 +255,8 @@ after_processing_focus:
 
       BeginMode2D(m_camera);
       {
-        for (const auto &object : m_objects) {
-          object->render();
+        for (const auto &entity : m_entities) {
+          entity->render();
         }
       }
       EndMode2D();
@@ -279,18 +272,18 @@ after_processing_focus:
     EndDrawing();
   }
 
-  void ui::pass_input_events_to_focused_object() {
+  void ui::pass_input_events_to_focused_entity() {
     using namespace raylib;
 
-    if (m_state != state::focused_on_object) {
-      throw std::logic_error("`pass_input_events_to_focused_object` function should only be called when something is in focus.");
+    if (m_state != state::focused_on_entity) {
+      throw std::logic_error("`pass_input_events_to_focused_entity` function should only be called when something is in focus.");
     }
 
-    keyboard_key_press_event keyboard_event;
+    keyboard_event keyboard_event;
     keyboard_event.key = static_cast<KeyboardKey>(GetKeyPressed());
     keyboard_event.codepoint = GetCharPressed();
 
-    mouse_click_event mouse_event;
+    mouse_event mouse_event;
     mouse_event.point = GetScreenToWorld2D(GetMousePosition(), m_camera);
 
     bool has_any_keyboard_key_been_pressed = keyboard_event.key != 0 || keyboard_event.codepoint != 0;
@@ -310,7 +303,7 @@ after_processing_focus:
       events.push_back(mouse_event);
     }
 
-    m_objects.back()->send_events(events);
+    m_entities.back()->send_events(events);
   }
 
   void ui::main_loop() {
@@ -319,8 +312,8 @@ after_processing_focus:
       update_camera();
       update_ui_state();
 
-      if (m_state == state::focused_on_object) {
-        pass_input_events_to_focused_object();
+      if (m_state == state::focused_on_entity) {
+        pass_input_events_to_focused_entity();
       }
 
       render();

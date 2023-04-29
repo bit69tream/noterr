@@ -6,7 +6,7 @@
 #include "raylib.hxx"
 
 namespace ui {
-  class object {
+  class entity {
   public:
     virtual void render() const = 0;
     virtual bool can_focus(raylib::Vector2 point) const = 0;

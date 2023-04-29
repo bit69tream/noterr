@@ -70,13 +70,13 @@ namespace ui {
   }
 
   void note::send_events(std::span<event> events) {
-    for (const auto &event : events) {
-      if (std::holds_alternative<mouse_click_event>(event)) {
-        auto mouse_event = std::get<mouse_click_event>(event);
-        std::wcout << L"mouse click event!!!!! (" << mouse_event.point.x << L", " << mouse_event.point.y << L")" << std::endl;
-      } else if (std::holds_alternative<keyboard_key_press_event>(event)) {
-        auto keyboard_event = std::get<keyboard_key_press_event>(event);
-        std::wcout << L"key: " << keyboard_event.codepoint << std::endl;
+    for (const auto &boxed_event : events) {
+      if (std::holds_alternative<mouse_event>(boxed_event)) {
+        auto event = std::get<mouse_event>(boxed_event);
+        std::wcout << L"mouse click event!!!!! (" << event.point.x << L", " << event.point.y << L")" << std::endl;
+      } else if (std::holds_alternative<keyboard_event>(boxed_event)) {
+        auto event = std::get<keyboard_event>(boxed_event);
+        std::wcout << L"key: " << event.codepoint << L"; " << event.key << std::endl;
       }
     }
   }
@@ -88,7 +88,7 @@ namespace ui {
     using namespace raylib_helper;
 
     DrawRectangleRec(m_border_box, m_theme.border);
-    DrawRectangleRec(m_bounding_box, m_theme.object_background);
+    DrawRectangleRec(m_bounding_box, m_theme.entity_background);
     DrawRectangleRec(m_title_delimiter, m_theme.border);
 
     render_wrapping_text_in_bounds(m_title, m_title_bounding_box, m_theme);

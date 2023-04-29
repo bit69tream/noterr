@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "note.hxx"
-#include "object.hxx"
+#include "entity.hxx"
 #include "popup.hxx"
 #include "raylib.hxx"
 #include "single_line_input.hxx"
@@ -16,7 +16,7 @@ namespace ui {
     just_looking,
     popup_menu,
     drawing_new_note,
-    focused_on_object,
+    focused_on_entity,
   };
 
   class ui {
@@ -36,7 +36,7 @@ namespace ui {
 
     void execute_popup_action(popup_actions action);
 
-    void pass_input_events_to_focused_object();
+    void pass_input_events_to_focused_entity();
 
   private:
     std::filesystem::path m_file_path;
@@ -56,7 +56,7 @@ namespace ui {
     bool m_should_close {false};
 
     raylib::Rectangle m_note_placeholder;
-    std::vector<std::unique_ptr<object>> m_objects;
+    std::vector<std::unique_ptr<entity>> m_entities;
 
     raylib::Shader m_background_texture_shader;
     raylib::RenderTexture2D m_background_texture_for_shader;

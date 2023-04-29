@@ -4,12 +4,12 @@
 #include <string>
 
 #include "event.hxx"
-#include "object.hxx"
+#include "entity.hxx"
 #include "raylib.hxx"
 #include "theme.hxx"
 
 namespace ui {
-  class note : public object {
+  class note : public entity {
   public:
     void render() const override;
     bool can_focus(raylib::Vector2 point) const override;

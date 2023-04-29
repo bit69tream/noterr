@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iostream>
 #include <memory>
 #include <span>
 #include <stdexcept>
@@ -31,10 +32,18 @@ namespace ui {
     using namespace raylib;
 
     DrawRectangleRec(m_border_box, m_theme.border);
-    DrawRectangleRec(m_bounding_box, m_theme.object_background);
+    DrawRectangleRec(m_bounding_box, m_theme.entity_background);
   }
 
   void single_line_input::send_events(std::span<event> events) {
-    (void)events;
+    for (const auto &boxed_event : events) {
+      if (std::holds_alternative<mouse_event>(boxed_event)) {
+        auto event = std::get<mouse_event>(boxed_event);
+        std::wcout << L"mouse click event!!!!! (" << event.point.x << L", " << event.point.y << L")" << std::endl;
+      } else if (std::holds_alternative<keyboard_event>(boxed_event)) {
+        auto event = std::get<keyboard_event>(boxed_event);
+        std::wcout << L"key: " << event.codepoint << L"; " << event.key << std::endl;
+      }
+    }
   }
 }  // namespace ui

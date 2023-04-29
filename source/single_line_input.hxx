@@ -4,12 +4,12 @@
 #include <string>
 
 #include "event.hxx"
-#include "object.hxx"
+#include "entity.hxx"
 #include "raylib.hxx"
 #include "theme.hxx"
 
 namespace ui {
-  class single_line_input : public object {
+  class single_line_input : public entity {
   public:
     single_line_input(raylib::Rectangle bounding_box, const theme &theme, bool center_text = false);
     single_line_input(std::wstring text, raylib::Rectangle bounding_box, const theme &theme, bool center_text = false);
@@ -26,5 +26,6 @@ namespace ui {
     std::wstring m_text;
     raylib::Vector2 m_text_dimensions;
     bool m_focused {false};
+    size_t m_cursor_position {0};
   };
 }  // namespace ui
