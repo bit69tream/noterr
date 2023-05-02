@@ -1,12 +1,14 @@
 #include <algorithm>
 #include <array>
 #include <iostream>
+#include <memory>
 #include <optional>
 #include <stdexcept>
 #include <string_view>
 
 #include "popup.hxx"
 #include "raylib_helper.hxx"
+#include "single_line_input.hxx"
 #include "ui.hxx"
 
 namespace ui {
@@ -45,7 +47,7 @@ namespace ui {
       .font_size = font_size,
       .glyph_spacing = 2,
       .line_spacing = 0,
-      .font = LoadFontEx("TimesNewerRoman-Regular.otf", font_size, nullptr, unicode_cyrillic_range_end),
+      .font = LoadFontEx("DejaVuSans.ttf", font_size, nullptr, unicode_cyrillic_range_end),
 
       .background = WHITE,
 
@@ -63,6 +65,9 @@ namespace ui {
 
       .entity_background = WHITE,
       .entity_foreground = BLACK,
+
+      .cursor_width = 2,
+      .cursor_color = BLACK,
     };
 
     m_background_texture_shader = LoadShader(nullptr, "source/background_pattern.fs");
@@ -212,9 +217,6 @@ after_processing_focus:
     using enum popup_actions;
 
     switch (action) {
-      case create_new_card:
-        throw std::runtime_error("TODO: cards.");
-        break;
       case create_new_note:
         raylib::SetMouseCursor(raylib::MOUSE_CURSOR_RESIZE_ALL);
         m_state = state::drawing_new_note;
@@ -230,6 +232,7 @@ after_processing_focus:
 
   void ui::draw_background_with_grid_pattern() {
     using namespace raylib;
+
     ClearBackground(m_theme.grid_color);
 
     Vector2 top_left_world_point = GetScreenToWorld2D({0, 0}, m_camera);

@@ -19,6 +19,9 @@ namespace ui {
     void send_events(std::span<event> events) override;
 
   private:
+    void render_cursor() const;
+
+  private:
     raylib::Rectangle m_bounding_box;
     raylib::Rectangle m_border_box;
     theme m_theme;
@@ -26,6 +29,6 @@ namespace ui {
     std::wstring m_text;
     raylib::Vector2 m_text_dimensions;
     bool m_focused {false};
-    size_t m_cursor_position {0};
+    ssize_t m_cursor_position {0};
   };
 }  // namespace ui

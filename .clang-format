@@ -1,4 +1,5 @@
 AccessModifierOffset: -2
+# InsertNewlineAtEOF: true # introduced in version 16
 AlignConsecutiveAssignments: false
 AlignConsecutiveDeclarations: false
 AlignConsecutiveMacros: false

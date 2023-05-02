@@ -25,5 +25,8 @@ namespace ui {
 
     raylib::Color entity_background;
     raylib::Color entity_foreground;
+
+    float cursor_width;
+    raylib::Color cursor_color;
   };
 };  // namespace ui
