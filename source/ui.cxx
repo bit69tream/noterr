@@ -172,7 +172,7 @@ namespace ui {
 
           SetMouseCursor(MOUSE_CURSOR_ARROW);
 
-          m_entities.push_back(std::make_unique<note>(map_rectangle_into_world_coordinates(into_proper_rectangle(m_note_placeholder), m_camera), m_theme));
+          m_entities.push_back(std::make_unique<note>(map_rectangle_into_world_coordinates(into_a_rectangle_where_the_top_left_corder_is_actually_a_top_left_corner(m_note_placeholder), m_camera), m_theme));
         } else {
           m_note_placeholder.width = mouse_position.x - m_note_placeholder.x;
           m_note_placeholder.height = mouse_position.y - m_note_placeholder.y;
@@ -265,7 +265,7 @@ after_processing_focus:
       if (m_state == popup_menu) {
         m_popup->render();
       } else if (m_state == drawing_new_note && m_started_drawing) {
-        DrawRectangleRec(raylib_helper::into_proper_rectangle(m_note_placeholder), m_theme.placeholder);
+        DrawRectangleRec(raylib_helper::into_a_rectangle_where_the_top_left_corder_is_actually_a_top_left_corner(m_note_placeholder), m_theme.placeholder);
       }
 
       DrawFPS(0, 0);

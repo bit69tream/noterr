@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <iostream>
+#include <limits>
 #include <memory>
 #include <span>
 #include <stdexcept>
@@ -46,7 +47,7 @@ namespace ui {
 
   void single_line_input::adjust_bounding_box() {
     m_bounding_box->width = m_text_dimensions.x;
-    m_bounding_box->height = m_text_dimensions.y;
+    m_bounding_box->height = std::clamp(m_text_dimensions.y, 10.0f, std::numeric_limits<float>::max());
   }
 
   void single_line_input::render() const {

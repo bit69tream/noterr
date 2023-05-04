@@ -3,12 +3,14 @@
 #include <compare>
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "entity.hxx"
 #include "event.hxx"
 #include "raylib.hxx"
 #include "single_line_input.hxx"
 #include "theme.hxx"
+#include "multi_line_input.hxx"
 
 namespace ui {
   class note : public entity {
@@ -17,7 +19,7 @@ namespace ui {
     bool can_focus(raylib::Vector2 point) const override;
     void send_events(std::span<event> events) override;
 
-    note(raylib::Rectangle bounding_box, std::wstring title, std::wstring text, const theme &theme);
+    note(raylib::Rectangle bounding_box, std::wstring title, std::vector<std::wstring> text, const theme &theme);
     note(raylib::Rectangle bounding_box, const theme &theme);
     ~note() = default;
 
@@ -29,14 +31,14 @@ namespace ui {
     bool m_focused {false};
     bool m_title_focused {false};
 
-    std::wstring m_text;
-    raylib::Rectangle m_text_bounding_box;
-
     raylib::Rectangle m_bounding_box;
     raylib::Rectangle m_border_box;
     raylib::Rectangle m_title_delimiter;
 
     std::shared_ptr<raylib::Rectangle> m_title_bounding_box;
     single_line_input m_title;
+
+    std::shared_ptr<raylib::Rectangle> m_text_bounding_box;
+    multi_line_input m_text;
   };
 };  // namespace ui
