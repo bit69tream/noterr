@@ -91,18 +91,28 @@ namespace raylib_helper {
     return rectangle;
   }
 
+  Rectangle add_border_to_rectangle(Rectangle rectangle, const ui::theme &theme) {
+    rectangle.x -= theme.border_size;
+    rectangle.y -= theme.border_size;
+    rectangle.width += theme.border_size * 2;
+    rectangle.height += theme.border_size * 2;
+
+    return rectangle;
+  }
+
   Vector2 get_line_dimensions(std::wstring_view line, const ui::theme &theme) {
     float width = 0;
     float height = 0;
 
     for (const auto &codepoint : line) {
       int glyph_index = raylib::GetGlyphIndex(theme.font, codepoint);
+      const auto &glyph = theme.font.glyphs[glyph_index];
       const auto &glyph_rectangle = theme.font.recs[glyph_index];
-      width += glyph_rectangle.width + theme.glyph_spacing;
+      width += static_cast<float>(glyph.advanceX) + theme.glyph_spacing;
       height = std::max(height, glyph_rectangle.height);
     }
     width -= theme.glyph_spacing;
 
-    return {.x = width, .y = height};
+    return {.x = width + (theme.glyph_spacing * 2), .y = height + (theme.line_spacing * 2)};
   }
 };  // namespace raylib_helper

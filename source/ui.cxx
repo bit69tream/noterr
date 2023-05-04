@@ -79,8 +79,6 @@ namespace ui {
         m_background_shader_grid_tile_size_as_percentage_location == -1) {
       throw std::runtime_error("fucky-wucky happened");
     }
-
-    m_entities.push_back(std::make_unique<single_line_input>(raylib::Rectangle {0, 0, 100, 40}, m_theme));
   }
 
   ui::~ui() {
