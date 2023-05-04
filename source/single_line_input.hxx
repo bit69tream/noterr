@@ -12,8 +12,10 @@
 namespace ui {
   class single_line_input : public element {
   public:
-    single_line_input(std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme, bool center_text = false);
-    single_line_input(std::wstring text, std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme, bool center_text = false);
+    single_line_input(std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme);
+    single_line_input(std::wstring text, std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme);
+
+    ~single_line_input() = default;
 
     void render() const override;
     void send_events(std::span<event> events) override;
@@ -25,9 +27,9 @@ namespace ui {
   private:
     std::shared_ptr<raylib::Rectangle> m_bounding_box;
     theme m_theme;
-    bool m_center_text;
     std::wstring m_text;
     raylib::Vector2 m_text_dimensions;
+    raylib::Vector2 m_text_position;
     bool m_focused {false};
     ssize_t m_cursor_position {0};
   };

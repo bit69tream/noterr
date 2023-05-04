@@ -10,4 +10,4 @@ namespace ui {
     virtual void render() const = 0;
     virtual void send_events(std::span<event> events) = 0;
   };
-};
+};  // namespace ui

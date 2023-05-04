@@ -10,18 +10,17 @@
 #include "single_line_input.hxx"
 
 namespace ui {
-  single_line_input::single_line_input(std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme, bool center_text)
+  single_line_input::single_line_input(std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme)
       : m_bounding_box(bounding_box),
-        m_theme(theme),
-        m_center_text(center_text) {
+        m_theme(theme) {
   }
 
-  single_line_input::single_line_input(std::wstring text, std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme, bool center_text)
+  single_line_input::single_line_input(std::wstring text, std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme)
       : m_bounding_box(bounding_box),
         m_theme(theme),
-        m_center_text(center_text),
         m_text(std::move(text)) {
     m_text_dimensions = raylib_helper::get_line_dimensions(m_text, m_theme);
+    adjust_bounding_box();
   }
 
   void single_line_input::render_cursor() const {

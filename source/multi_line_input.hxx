@@ -1,16 +1,15 @@
 #pragma once
 
-#include <vector>
 #include <span>
 #include <string>
+#include <vector>
 
-#include "raylib.hxx"
 #include "element.hxx"
+#include "raylib.hxx"
 
 namespace ui {
   class multi_line_input : public element {
   public:
-
     multi_line_input();
     ~multi_line_input();
 
@@ -22,4 +21,4 @@ namespace ui {
     size_t m_cursor_row;
     size_t m_cursor_column;
   };
-};
+};  // namespace ui

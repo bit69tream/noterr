@@ -11,24 +11,21 @@
 
 namespace ui {
   note::note(raylib::Rectangle bounding_box, std::wstring title, std::wstring text, const theme &theme)
-      : m_bounding_box(raylib_helper::subtract_border_from_rectangle(bounding_box, m_theme)),
+      : m_theme(theme),
         m_text(std::move(text)),
-        m_theme(theme) {
-    m_title_bounding_box = std::make_shared<raylib::Rectangle>(bounding_box.x, bounding_box.y, bounding_box.width, m_theme.font_size);
-    m_title = std::make_unique<single_line_input>(std::move(title), m_title_bounding_box, m_theme, true);
+        m_bounding_box(raylib_helper::subtract_border_from_rectangle(bounding_box, m_theme)),
+        m_title_bounding_box(std::make_shared<raylib::Rectangle>(bounding_box.x, bounding_box.y, bounding_box.width, m_theme.font_size)),
+        m_title(std::move(title), m_title_bounding_box, m_theme) {
     compute_element_coordinates();
   }
 
   note::note(raylib::Rectangle bounding_box, const theme &theme)
-      : m_bounding_box(bounding_box),
+      : m_theme(theme),
+        m_bounding_box(bounding_box),
         m_border_box(bounding_box),
-        m_theme(theme) {
-    m_title_bounding_box = std::make_shared<raylib::Rectangle>(bounding_box.x, bounding_box.y, bounding_box.width, m_theme.font_size);
-    m_title = std::make_unique<single_line_input>(m_title_bounding_box, m_theme, true);
+        m_title_bounding_box(std::make_shared<raylib::Rectangle>(bounding_box.x, bounding_box.y, bounding_box.width, m_theme.font_size)),
+        m_title(m_title_bounding_box, m_theme) {
     compute_element_coordinates();
-  }
-
-  note::~note() {
   }
 
   void note::compute_element_coordinates() {
@@ -84,7 +81,7 @@ namespace ui {
     }
 
     if (!title_events.empty()) {
-      m_title->send_events(title_events);
+      m_title.send_events(title_events);
     }
 
     compute_element_coordinates();
@@ -99,7 +96,7 @@ namespace ui {
     DrawRectangleRec(m_bounding_box, m_theme.entity_background);
     DrawRectangleRec(m_title_delimiter, m_theme.border);
 
-    m_title->render();
+    m_title.render();
     render_wrapping_text_in_bounds(m_text, m_text_bounding_box, m_theme);
   }
 };  // namespace ui

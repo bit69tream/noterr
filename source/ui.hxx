@@ -4,8 +4,8 @@
 #include <string>
 #include <vector>
 
-#include "note.hxx"
 #include "entity.hxx"
+#include "note.hxx"
 #include "popup.hxx"
 #include "raylib.hxx"
 #include "single_line_input.hxx"
