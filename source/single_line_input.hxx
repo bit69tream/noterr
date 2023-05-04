@@ -4,19 +4,18 @@
 #include <span>
 #include <string>
 
-#include "entity.hxx"
+#include "element.hxx"
 #include "event.hxx"
 #include "raylib.hxx"
 #include "theme.hxx"
 
 namespace ui {
-  class single_line_input : public entity {
+  class single_line_input : public element {
   public:
     single_line_input(std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme, bool center_text = false);
     single_line_input(std::wstring text, std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme, bool center_text = false);
 
     void render() const override;
-    bool can_focus(raylib::Vector2 point) const override;
     void send_events(std::span<event> events) override;
 
   private:

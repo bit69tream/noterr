@@ -24,10 +24,6 @@ namespace ui {
     m_text_dimensions = raylib_helper::get_line_dimensions(m_text, m_theme);
   }
 
-  bool single_line_input::can_focus(raylib::Vector2 point) const {
-    return CheckCollisionPointRec(point, *m_bounding_box);
-  }
-
   void single_line_input::render_cursor() const {
     using namespace raylib;
 
@@ -58,13 +54,27 @@ namespace ui {
     using namespace raylib;
 
     render_cursor();
-    DrawTextCodepoints(m_theme.font, (const int *)m_text.data(), (int)m_text.size(), Vector2 {m_bounding_box->x, m_bounding_box->y}, m_theme.font_size, m_theme.glyph_spacing, m_theme.entity_foreground);
+    DrawTextCodepoints(m_theme.font, reinterpret_cast<const int *>(m_text.data()), static_cast<int>(m_text.size()), Vector2 {m_bounding_box->x, m_bounding_box->y}, m_theme.font_size, m_theme.glyph_spacing, m_theme.entity_foreground);
   }
 
   void single_line_input::send_events(std::span<event> events) {
     for (const auto &boxed_event : events) {
       if (std::holds_alternative<mouse_event>(boxed_event)) {
-        // auto event = std::get<mouse_event>(boxed_event);
+        auto event = std::get<mouse_event>(boxed_event);
+        const int point_x_offset = static_cast<int>(event.point.x - m_bounding_box->x);
+
+        m_cursor_position = static_cast<ssize_t>(m_text.size());
+        int text_width = 0;
+        for (size_t i = 0; i < m_text.size(); i++) {
+          const int glyph_index = raylib::GetGlyphIndex(m_theme.font, m_text[i]);
+          const auto &glyph = m_theme.font.glyphs[glyph_index];
+
+          text_width += glyph.advanceX + static_cast<int>(m_theme.glyph_spacing);
+          if (text_width > point_x_offset) {
+            m_cursor_position = static_cast<ssize_t>(i);
+            break;
+          }
+        }
       } else if (std::holds_alternative<keyboard_event>(boxed_event)) {
         auto event = std::get<keyboard_event>(boxed_event);
 

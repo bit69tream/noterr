@@ -105,7 +105,7 @@ namespace raylib_helper {
     float height = 0;
 
     for (const auto &codepoint : line) {
-      int glyph_index = raylib::GetGlyphIndex(theme.font, codepoint);
+      const int glyph_index = raylib::GetGlyphIndex(theme.font, codepoint);
       const auto &glyph = theme.font.glyphs[glyph_index];
       const auto &glyph_rectangle = theme.font.recs[glyph_index];
       width += static_cast<float>(glyph.advanceX) + theme.glyph_spacing;
