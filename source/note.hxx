@@ -7,10 +7,11 @@
 
 #include "entity.hxx"
 #include "event.hxx"
+#include "multi_line_input.hxx"
+#include "raylib.h"
 #include "raylib.hxx"
 #include "single_line_input.hxx"
 #include "theme.hxx"
-#include "multi_line_input.hxx"
 
 namespace ui {
   class note : public entity {
@@ -25,6 +26,8 @@ namespace ui {
 
   private:
     void compute_element_coordinates();
+    raylib::Rectangle title_delimiter();
+    raylib::Rectangle text_bounding_box();
 
   private:
     theme m_theme;
@@ -33,10 +36,11 @@ namespace ui {
 
     raylib::Rectangle m_bounding_box;
     raylib::Rectangle m_border_box;
-    raylib::Rectangle m_title_delimiter;
 
     std::shared_ptr<raylib::Rectangle> m_title_bounding_box;
     single_line_input m_title;
+
+    raylib::Rectangle m_title_delimiter;
 
     std::shared_ptr<raylib::Rectangle> m_text_bounding_box;
     multi_line_input m_text;

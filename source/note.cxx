@@ -15,6 +15,8 @@ namespace ui {
         m_bounding_box(raylib_helper::subtract_border_from_rectangle(bounding_box, m_theme)),
         m_title_bounding_box(std::make_shared<raylib::Rectangle>(bounding_box.x, bounding_box.y, bounding_box.width, m_theme.font_size)),
         m_title(std::move(title), m_title_bounding_box, m_theme),
+        m_title_delimiter(title_delimiter()),
+        m_text_bounding_box(std::make_shared<raylib::Rectangle>(text_bounding_box())),
         m_text(std::move(text), m_text_bounding_box, theme) {
     compute_element_coordinates();
   }
@@ -25,8 +27,28 @@ namespace ui {
         m_border_box(bounding_box),
         m_title_bounding_box(std::make_shared<raylib::Rectangle>(bounding_box.x, bounding_box.y, bounding_box.width, m_theme.font_size)),
         m_title(m_title_bounding_box, m_theme),
+        m_title_delimiter(title_delimiter()),
+        m_text_bounding_box(std::make_shared<raylib::Rectangle>(text_bounding_box())),
         m_text(m_text_bounding_box, theme) {
     compute_element_coordinates();
+  }
+
+  raylib::Rectangle note::title_delimiter() {
+    return raylib::Rectangle {
+      .x = m_bounding_box.x + m_theme.border_size,
+      .y = m_title_bounding_box->y + m_title_bounding_box->height,
+      .width = m_bounding_box.width - (m_theme.border_size * 2),
+      .height = m_theme.border_size,
+    };
+  }
+
+  raylib::Rectangle note::text_bounding_box() {
+    return raylib::Rectangle {
+      .x = m_bounding_box.x + m_theme.glyph_spacing,
+      .y = m_title_delimiter.y + m_title_delimiter.height + m_theme.glyph_spacing,
+      .width = m_bounding_box.width - (2 * m_theme.glyph_spacing),
+      .height = m_bounding_box.height - m_title_bounding_box->height - (4 * m_theme.glyph_spacing) - m_title_delimiter.height,
+    };
   }
 
   void note::compute_element_coordinates() {
@@ -38,19 +60,7 @@ namespace ui {
 
     m_border_box = raylib_helper::add_border_to_rectangle(m_bounding_box, m_theme);
 
-    m_title_delimiter = Rectangle {
-      .x = m_bounding_box.x + m_theme.border_size,
-      .y = m_title_bounding_box->y + m_title_bounding_box->height,
-      .width = m_bounding_box.width - (m_theme.border_size * 2),
-      .height = m_theme.border_size,
-    };
-
-    // m_text_bounding_box = Rectangle {
-    //   .x = m_bounding_box.x + m_theme.glyph_spacing,
-    //   .y = m_title_delimiter.y + m_title_delimiter.height + m_theme.glyph_spacing,
-    //   .width = m_bounding_box.width - (2 * m_theme.glyph_spacing),
-    //   .height = m_bounding_box.height - m_title_bounding_box->height - (4 * m_theme.glyph_spacing) - m_title_delimiter.height,
-    // };
+    m_title_delimiter = title_delimiter();
   }
 
   bool note::can_focus(raylib::Vector2 point) const {
