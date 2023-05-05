@@ -47,12 +47,12 @@ namespace ui {
       .x = m_bounding_box.x + m_theme.glyph_spacing,
       .y = m_title_delimiter.y + m_title_delimiter.height + m_theme.glyph_spacing,
       .width = m_bounding_box.width - (2 * m_theme.glyph_spacing),
-      .height = m_bounding_box.height - m_title_bounding_box->height - (4 * m_theme.glyph_spacing) - m_title_delimiter.height,
+      .height = m_bounding_box.height - m_title_bounding_box->height - (4 * m_theme.line_spacing) - m_title_delimiter.height,
     };
   }
 
   float note::new_bounding_box_height() {
-    return m_title_bounding_box->height + m_title_delimiter.height + m_body_bounding_box->height;
+    return m_title_bounding_box->height + m_title_delimiter.height + m_body_bounding_box->height + (4 * m_theme.line_spacing);
   }
 
   void note::compute_element_coordinates() {

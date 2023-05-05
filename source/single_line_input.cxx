@@ -20,8 +20,13 @@ namespace ui {
       : m_bounding_box(bounding_box),
         m_theme(theme),
         m_text(std::move(text)) {
-    m_text_dimensions = raylib_helper::get_line_dimensions(m_text, m_theme);
+    adjust_text_dimensions();
     adjust_bounding_box();
+  }
+
+  void single_line_input::adjust_text_dimensions() {
+    m_text_dimensions = raylib_helper::get_line_dimensions(m_text, m_theme);
+    m_text_dimensions.y += 2 * m_theme.line_spacing;
   }
 
   void single_line_input::render_cursor() const {
@@ -104,7 +109,7 @@ namespace ui {
     }
 
     m_cursor_position = std::clamp(m_cursor_position, static_cast<ssize_t>(0), static_cast<ssize_t>(m_text.size()));
-    m_text_dimensions = raylib_helper::get_line_dimensions(m_text, m_theme);
+    adjust_text_dimensions();
     adjust_bounding_box();
   }
 }  // namespace ui

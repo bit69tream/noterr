@@ -71,6 +71,6 @@ namespace raylib_helper {
     }
     width -= theme.glyph_spacing;
 
-    return {.x = width + (theme.glyph_spacing * 2), .y = height + (theme.line_spacing * 2)};
+    return {.x = width + (theme.glyph_spacing * 2), .y = height};
   }
 };  // namespace raylib_helper

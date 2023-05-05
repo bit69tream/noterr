@@ -37,7 +37,6 @@ namespace ui {
     for (const auto &line : m_line_dimensions) {
       lines_height += line.y + m_theme.line_spacing;
     }
-    lines_height -= m_theme.line_spacing;
 
     m_bounding_box->height = std::max(m_bounding_box->height, lines_height);
   }

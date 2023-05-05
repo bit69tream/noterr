@@ -23,6 +23,7 @@ namespace ui {
   private:
     void render_cursor() const;
     void adjust_bounding_box();
+    void adjust_text_dimensions();
 
   private:
     std::shared_ptr<raylib::Rectangle> m_bounding_box;
