@@ -1,1 +1,1 @@
-((nil . ((compile-command . "cmake --build build && build/todo asdf.todo"))))
+((nil . ((compile-command . "cmake --build build && build/noterr asdf.noterr"))))

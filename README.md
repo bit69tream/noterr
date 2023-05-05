@@ -1,2 +1,2 @@
-# TODO
-**TODO** is a local todo app with Plan9-inspired UI.
+# NOTERR
+**NOTERR** is a todo/notes app with Plan9-inspired UI.

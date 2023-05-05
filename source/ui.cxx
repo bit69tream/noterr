@@ -24,7 +24,7 @@ namespace ui {
 #endif
 
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    InitWindow(static_cast<int>(m_width), static_cast<int>(m_height), "todo");
+    InitWindow(static_cast<int>(m_width), static_cast<int>(m_height), "noterr");
     SetExitKey(KEY_NULL);
 
     SetWindowTitle(m_file_path.filename().c_str());
