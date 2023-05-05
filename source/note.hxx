@@ -27,12 +27,13 @@ namespace ui {
   private:
     void compute_element_coordinates();
     raylib::Rectangle title_delimiter();
-    raylib::Rectangle text_bounding_box();
+    raylib::Rectangle body_bounding_box();
+    float new_bounding_box_height();
 
   private:
     theme m_theme;
-    bool m_focused {false};
-    bool m_title_focused {false};
+    // TODO: a better way to manage focused elements
+    bool m_title_focused {true};
 
     raylib::Rectangle m_bounding_box;
     raylib::Rectangle m_border_box;
@@ -42,7 +43,7 @@ namespace ui {
 
     raylib::Rectangle m_title_delimiter;
 
-    std::shared_ptr<raylib::Rectangle> m_text_bounding_box;
-    multi_line_input m_text;
+    std::shared_ptr<raylib::Rectangle> m_body_bounding_box;
+    multi_line_input m_body;
   };
 };  // namespace ui

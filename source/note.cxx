@@ -16,8 +16,8 @@ namespace ui {
         m_title_bounding_box(std::make_shared<raylib::Rectangle>(bounding_box.x, bounding_box.y, bounding_box.width, m_theme.font_size)),
         m_title(std::move(title), m_title_bounding_box, m_theme),
         m_title_delimiter(title_delimiter()),
-        m_text_bounding_box(std::make_shared<raylib::Rectangle>(text_bounding_box())),
-        m_text(std::move(text), m_text_bounding_box, theme) {
+        m_body_bounding_box(std::make_shared<raylib::Rectangle>(body_bounding_box())),
+        m_body(std::move(text), m_body_bounding_box, theme) {
     compute_element_coordinates();
   }
 
@@ -28,8 +28,8 @@ namespace ui {
         m_title_bounding_box(std::make_shared<raylib::Rectangle>(bounding_box.x, bounding_box.y, bounding_box.width, m_theme.font_size)),
         m_title(m_title_bounding_box, m_theme),
         m_title_delimiter(title_delimiter()),
-        m_text_bounding_box(std::make_shared<raylib::Rectangle>(text_bounding_box())),
-        m_text(m_text_bounding_box, theme) {
+        m_body_bounding_box(std::make_shared<raylib::Rectangle>(body_bounding_box())),
+        m_body(m_body_bounding_box, theme) {
     compute_element_coordinates();
   }
 
@@ -42,7 +42,7 @@ namespace ui {
     };
   }
 
-  raylib::Rectangle note::text_bounding_box() {
+  raylib::Rectangle note::body_bounding_box() {
     return raylib::Rectangle {
       .x = m_bounding_box.x + m_theme.glyph_spacing,
       .y = m_title_delimiter.y + m_title_delimiter.height + m_theme.glyph_spacing,
@@ -51,16 +51,21 @@ namespace ui {
     };
   }
 
+  float note::new_bounding_box_height() {
+    return m_title_bounding_box->height + m_title_delimiter.height + m_body_bounding_box->height;
+  }
+
   void note::compute_element_coordinates() {
     using namespace raylib;
 
-    if (m_title_bounding_box->width > m_bounding_box.width) {
-      m_bounding_box.width = m_title_bounding_box->width;
+    float max_element_width = std::max(m_title_bounding_box->width, m_body_bounding_box->width);
+    if (max_element_width > m_bounding_box.width) {
+      m_bounding_box.width = max_element_width;
     }
 
-    m_border_box = raylib_helper::add_border_to_rectangle(m_bounding_box, m_theme);
-
     m_title_delimiter = title_delimiter();
+    m_bounding_box.height = std::max(new_bounding_box_height(), m_bounding_box.height);
+    m_border_box = raylib_helper::add_border_to_rectangle(m_bounding_box, m_theme);
   }
 
   bool note::can_focus(raylib::Vector2 point) const {
@@ -69,24 +74,29 @@ namespace ui {
 
   void note::send_events(std::span<event> events) {
     std::vector<event> title_events;
+    std::vector<event> body_events;
 
     for (const auto &boxed_event : events) {
       if (std::holds_alternative<mouse_event>(boxed_event)) {
         auto event = std::get<mouse_event>(boxed_event);
 
         // TODO: introduce something like `m_title_area` where user can click to focus `m_title`
-        // because right now user needs to press directly on the text to be able to focus it
+        // because right now user needs to press directly on the text to be able to focus it.
+        // same should be done for `m_body_bounding_box`
         if (raylib::CheckCollisionPointRec(event.point, *m_title_bounding_box)) {
           m_title_focused = true;
           title_events.push_back(event);
         } else {
           m_title_focused = false;
+          body_events.push_back(event);
         }
       } else if (std::holds_alternative<keyboard_event>(boxed_event)) {
         auto event = std::get<keyboard_event>(boxed_event);
 
         if (m_title_focused) {
           title_events.push_back(event);
+        } else {
+          body_events.push_back(event);
         }
       }
     }
@@ -95,10 +105,13 @@ namespace ui {
       m_title.send_events(title_events);
     }
 
+    if (!body_events.empty()) {
+      m_body.send_events(body_events);
+    }
+
     compute_element_coordinates();
   }
 
-  // TODO: scrolling
   void note::render() const {
     using namespace raylib;
     using namespace raylib_helper;
@@ -108,6 +121,6 @@ namespace ui {
     DrawRectangleRec(m_title_delimiter, m_theme.border);
 
     m_title.render();
-    m_text.render();
+    m_body.render();
   }
 };  // namespace ui

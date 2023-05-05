@@ -34,9 +34,9 @@ namespace ui {
       return;
     }
 
-    const Vector2 line_dimensions = raylib_helper::get_line_dimensions(text_before_cursor, m_theme);
+    const Vector2 text_before_cursor_dimensions = raylib_helper::get_line_dimensions(text_before_cursor, m_theme);
     const Rectangle cursor = Rectangle {
-      .x = line_dimensions.x + m_bounding_box->x,
+      .x = text_before_cursor_dimensions.x + m_bounding_box->x,
       .y = m_bounding_box->y,
       .width = m_theme.cursor_width,
       .height = static_cast<float>(m_theme.font.baseSize),
@@ -46,8 +46,8 @@ namespace ui {
   }
 
   void single_line_input::adjust_bounding_box() {
-    m_bounding_box->width = m_text_dimensions.x;
-    m_bounding_box->height = std::clamp(m_text_dimensions.y, 10.0f, std::numeric_limits<float>::max());
+    m_bounding_box->width = std::max(m_text_dimensions.x, m_bounding_box->width);
+    m_bounding_box->height = std::max(m_text_dimensions.y, m_bounding_box->height);
   }
 
   void single_line_input::render() const {
@@ -91,8 +91,12 @@ namespace ui {
             } break;
             case raylib::KEY_BACKSPACE: {
               m_cursor_position--;
+              if (m_cursor_position < 0) {
+                break;
+              }
+
               m_text = m_text.erase(static_cast<size_t>(m_cursor_position), 1);
-            }
+            } break;
             default: break;
           };
         }
