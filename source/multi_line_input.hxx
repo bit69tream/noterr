@@ -10,7 +10,7 @@
 #include "theme.hxx"
 
 namespace ui {
-  class multi_line_input : public element {
+  class multi_line_input final : public element {
   public:
     multi_line_input(std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme);
     multi_line_input(std::vector<std::wstring> lines, std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme);

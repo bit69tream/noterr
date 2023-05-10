@@ -10,7 +10,7 @@
 #include "theme.hxx"
 
 namespace ui {
-  class single_line_input : public element {
+  class single_line_input final : public element {
   public:
     single_line_input(std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme);
     single_line_input(std::wstring text, std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme);

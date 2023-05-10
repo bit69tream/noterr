@@ -14,7 +14,7 @@
 #include "theme.hxx"
 
 namespace ui {
-  class note : public entity {
+  class note final : public entity {
   public:
     void render() const override;
     bool can_focus(raylib::Vector2 point) const override;
@@ -32,12 +32,12 @@ namespace ui {
 
   private:
     theme m_theme;
-    // TODO: a better way to manage focused elements
-    bool m_title_focused {true};
 
     raylib::Rectangle m_bounding_box;
     raylib::Rectangle m_border_box;
 
+    // TODO: a better way to manage focused elements
+    bool m_title_focused {true};
     std::shared_ptr<raylib::Rectangle> m_title_bounding_box;
     single_line_input m_title;
 
