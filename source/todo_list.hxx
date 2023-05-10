@@ -1,13 +1,13 @@
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
-#include "raylib.hxx"
 #include "entity.hxx"
-#include "theme.hxx"
+#include "raylib.hxx"
 #include "single_line_input.hxx"
+#include "theme.hxx"
 
 namespace ui {
   struct task {
@@ -27,6 +27,7 @@ namespace ui {
 
   private:
     raylib::Rectangle title_delimiter();
+    void compute_element_coordinates();
 
   private:
     theme m_theme;
@@ -34,7 +35,7 @@ namespace ui {
     raylib::Rectangle m_bounding_box;
     raylib::Rectangle m_border_box;
 
-    bool m_title_focused{false};
+    bool m_title_focused {true};
     std::shared_ptr<raylib::Rectangle> m_title_bounding_box;
     single_line_input m_title;
 
