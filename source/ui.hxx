@@ -15,8 +15,14 @@ namespace ui {
   enum class state {
     just_looking,
     popup_menu,
-    drawing_new_note,
+    drawing_new_entity,
     focused_on_entity,
+  };
+
+  enum class new_entity_type {
+    nothing,
+    note,
+    todo_list,
   };
 
   class ui {
@@ -50,6 +56,7 @@ namespace ui {
 
     state m_state {state::just_looking};
     bool m_started_drawing {false};
+    new_entity_type m_new_entity_type{new_entity_type::nothing};
 
     theme m_theme;
 

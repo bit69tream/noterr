@@ -6,9 +6,11 @@
 #include <stdexcept>
 #include <string_view>
 
+#include "entity.hxx"
 #include "popup.hxx"
 #include "raylib_helper.hxx"
 #include "single_line_input.hxx"
+#include "todo_list.hxx"
 #include "ui.hxx"
 
 namespace ui {
@@ -157,7 +159,7 @@ namespace ui {
         execute_popup_action(maybe_action.value());
         delete m_popup.release();
       } break;
-      case drawing_new_note: {
+      case drawing_new_entity: {
         if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
           m_started_drawing = true;
 
@@ -167,12 +169,27 @@ namespace ui {
         } else if (IsMouseButtonReleased(MOUSE_BUTTON_RIGHT) && m_started_drawing) {
           using namespace raylib_helper;
 
+          const auto bounding_box = map_rectangle_into_world_coordinates(into_a_rectangle_where_the_top_left_corder_is_actually_a_top_left_corner(m_note_placeholder), m_camera);
+          std::unique_ptr<entity> new_entity = nullptr;
+
+          switch (m_new_entity_type) {
+            case new_entity_type::note: {
+              new_entity = std::make_unique<note>(bounding_box, m_theme);
+            } break;
+            case new_entity_type::todo_list: {
+              new_entity = std::make_unique<todo_list>(bounding_box, m_theme);
+            } break;
+            case new_entity_type::nothing: {
+              throw std::logic_error("BUG");
+            }
+          }
+          m_entities.push_back(std::move(new_entity));
+
+          m_new_entity_type = new_entity_type::nothing;
           m_state = just_looking;
           m_started_drawing = false;
 
           SetMouseCursor(MOUSE_CURSOR_ARROW);
-
-          m_entities.push_back(std::make_unique<note>(map_rectangle_into_world_coordinates(into_a_rectangle_where_the_top_left_corder_is_actually_a_top_left_corner(m_note_placeholder), m_camera), m_theme));
         } else {
           m_note_placeholder.width = mouse_position.x - m_note_placeholder.x;
           m_note_placeholder.height = mouse_position.y - m_note_placeholder.y;
@@ -203,6 +220,7 @@ after_processing_focus:
             vector<tuple<string_view, popup_actions>> {
               make_tuple("Restore zoom", popup_actions::restore_zoom),
               make_tuple("New note", popup_actions::create_new_note),
+              make_tuple("New todo list", popup_actions::create_new_todo_list),
               make_tuple("Quit", popup_actions::quit),
             },
             GetMousePosition(), m_theme);
@@ -214,10 +232,18 @@ after_processing_focus:
   void ui::execute_popup_action(popup_actions action) {
     using enum popup_actions;
 
+    m_new_entity_type = new_entity_type::nothing;
     switch (action) {
+      case create_new_todo_list:
+        m_new_entity_type = new_entity_type::todo_list;
+        [[fallthrough]];
       case create_new_note:
+        if (m_new_entity_type == new_entity_type::nothing) {
+          m_new_entity_type = new_entity_type::note;
+        }
+
         raylib::SetMouseCursor(raylib::MOUSE_CURSOR_RESIZE_ALL);
-        m_state = state::drawing_new_note;
+        m_state = state::drawing_new_entity;
         break;
       case restore_zoom:
         m_camera.zoom = 1.0f;
@@ -264,7 +290,7 @@ after_processing_focus:
 
       if (m_state == popup_menu) {
         m_popup->render();
-      } else if (m_state == drawing_new_note && m_started_drawing) {
+      } else if (m_state == drawing_new_entity && m_started_drawing) {
         DrawRectangleRec(raylib_helper::into_a_rectangle_where_the_top_left_corder_is_actually_a_top_left_corner(m_note_placeholder), m_theme.placeholder);
       }
 
