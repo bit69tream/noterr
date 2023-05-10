@@ -12,7 +12,8 @@
 namespace ui {
   note::note(raylib::Rectangle bounding_box, std::wstring title, std::vector<std::wstring> text, const theme &theme)
       : m_theme(theme),
-        m_bounding_box(raylib_helper::subtract_border_from_rectangle(bounding_box, m_theme)),
+        m_bounding_box(bounding_box),
+        m_border_box(bounding_box),
         m_title_bounding_box(std::make_shared<raylib::Rectangle>(bounding_box.x, bounding_box.y, bounding_box.width, m_theme.font_size)),
         m_title(std::move(title), m_title_bounding_box, m_theme),
         m_title_delimiter(title_delimiter()),
