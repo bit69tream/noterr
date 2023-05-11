@@ -1,1 +1,1 @@
-((nil . ((compile-command . "cmake --build build && build/noterr"))))
+((nil . ((compile-command . "./format.sh && cmake --build build && build/noterr"))))

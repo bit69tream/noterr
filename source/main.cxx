@@ -6,8 +6,8 @@
 #include "ui.hxx"
 
 int main(int command_line_arguments_length, char *command_line_arguments[]) {
-  (void) command_line_arguments;
-  (void) command_line_arguments_length;
+  (void)command_line_arguments;
+  (void)command_line_arguments_length;
 
   // if (command_line_arguments_length != 2) {
   //   std::cerr << "Usage: noterr <filename.noterr>" << std::endl;

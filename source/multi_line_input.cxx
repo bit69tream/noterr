@@ -9,9 +9,7 @@
 #include "raylib_helper.hxx"
 
 namespace ui {
-  multi_line_input::multi_line_input(std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme)
-      : m_bounding_box(bounding_box),
-        m_theme(theme) {
+  multi_line_input::multi_line_input(std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme) : m_bounding_box(bounding_box), m_theme(theme) {
     m_lines.push_back(L"");
     calculate_line_dimensions();
     adjust_bounding_box();
@@ -86,7 +84,8 @@ namespace ui {
 
     float y = m_bounding_box->y + m_theme.line_spacing;
     for (size_t i = 0; i < m_lines.size(); i++) {
-      raylib::DrawTextCodepoints(m_theme.font, reinterpret_cast<const int *>(m_lines[i].data()), static_cast<int>(m_lines[i].size()), raylib::Vector2 {m_bounding_box->x, y}, m_theme.font_size, m_theme.glyph_spacing, m_theme.entity_foreground);
+      raylib::DrawTextCodepoints(m_theme.font, reinterpret_cast<const int *>(m_lines[i].data()), static_cast<int>(m_lines[i].size()), raylib::Vector2 {m_bounding_box->x, y}, m_theme.font_size,
+                                 m_theme.glyph_spacing, m_theme.entity_foreground);
       y += m_line_dimensions[i].y + m_theme.line_spacing;
     }
 

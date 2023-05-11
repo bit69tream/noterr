@@ -11,15 +11,10 @@
 #include "single_line_input.hxx"
 
 namespace ui {
-  single_line_input::single_line_input(std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme)
-      : m_bounding_box(bounding_box),
-        m_theme(theme) {
+  single_line_input::single_line_input(std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme) : m_bounding_box(bounding_box), m_theme(theme) {
   }
 
-  single_line_input::single_line_input(std::wstring text, std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme)
-      : m_bounding_box(bounding_box),
-        m_theme(theme),
-        m_text(std::move(text)) {
+  single_line_input::single_line_input(std::wstring text, std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme) : m_bounding_box(bounding_box), m_theme(theme), m_text(std::move(text)) {
     adjust_text_dimensions();
     adjust_bounding_box();
   }
@@ -59,7 +54,8 @@ namespace ui {
     using namespace raylib;
 
     render_cursor();
-    DrawTextCodepoints(m_theme.font, reinterpret_cast<const int *>(m_text.data()), static_cast<int>(m_text.size()), Vector2 {m_bounding_box->x, m_bounding_box->y}, m_theme.font_size, m_theme.glyph_spacing, m_theme.entity_foreground);
+    DrawTextCodepoints(m_theme.font, reinterpret_cast<const int *>(m_text.data()), static_cast<int>(m_text.size()), Vector2 {m_bounding_box->x, m_bounding_box->y}, m_theme.font_size,
+                       m_theme.glyph_spacing, m_theme.entity_foreground);
   }
 
   void single_line_input::send_events(std::span<event> events) {

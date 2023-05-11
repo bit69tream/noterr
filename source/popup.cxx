@@ -6,8 +6,7 @@
 #include "raylib_helper.hxx"
 
 namespace ui {
-  popup::popup(std::vector<std::tuple<std::string_view, popup_actions>> entries, raylib::Vector2 position, const theme &theme)
-      : m_theme(theme) {
+  popup::popup(std::vector<std::tuple<std::string_view, popup_actions>> entries, raylib::Vector2 position, const theme &theme) : m_theme(theme) {
     using namespace raylib;
 
     if (entries.size() == 0) {
@@ -80,8 +79,7 @@ namespace ui {
 
       Vector2 text_position = entry.position;
       text_position.x += m_theme.popup_text_padding;
-      DrawTextEx(m_theme.font, entry.text.data(), text_position,
-                 m_theme.font_size, m_theme.glyph_spacing, popup_foreground);
+      DrawTextEx(m_theme.font, entry.text.data(), text_position, m_theme.font_size, m_theme.glyph_spacing, popup_foreground);
     }
 
     if (isFocusingAnEntry) {

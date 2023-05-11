@@ -14,8 +14,7 @@
 #include "ui.hxx"
 
 namespace ui {
-  ui::ui(std::filesystem::path file_path)
-      : m_file_path(std::move(file_path)) {
+  ui::ui(std::filesystem::path file_path) : m_file_path(std::move(file_path)) {
     using namespace raylib;
     using namespace std::string_view_literals;
 
@@ -77,8 +76,7 @@ namespace ui {
     m_background_shader_screen_resolution_location = GetShaderLocation(m_background_texture_shader, "screenResolutionAndTopLeftPoint");
     m_background_shader_grid_tile_size_as_percentage_location = GetShaderLocation(m_background_texture_shader, "gridTilePercent");
 
-    if (m_background_shader_screen_resolution_location == -1 ||
-        m_background_shader_grid_tile_size_as_percentage_location == -1) {
+    if (m_background_shader_screen_resolution_location == -1 || m_background_shader_grid_tile_size_as_percentage_location == -1) {
       throw std::runtime_error("fucky-wucky happened");
     }
   }
@@ -105,9 +103,7 @@ namespace ui {
       UnloadRenderTexture(m_background_texture_for_shader);
       m_background_texture_for_shader = LoadRenderTexture(static_cast<int>(m_width), static_cast<int>(m_height));
       BeginTextureMode(m_background_texture_for_shader);
-      {
-        DrawRectangle(0, 0, static_cast<int>(m_width), static_cast<int>(m_height), m_theme.background);
-      }
+      { DrawRectangle(0, 0, static_cast<int>(m_width), static_cast<int>(m_height), m_theme.background); }
       EndTextureMode();
     }
 
@@ -234,9 +230,7 @@ after_processing_focus:
 
     m_new_entity_type = new_entity_type::nothing;
     switch (action) {
-      case create_new_todo_list:
-        m_new_entity_type = new_entity_type::todo_list;
-        [[fallthrough]];
+      case create_new_todo_list: m_new_entity_type = new_entity_type::todo_list; [[fallthrough]];
       case create_new_note:
         if (m_new_entity_type == new_entity_type::nothing) {
           m_new_entity_type = new_entity_type::note;
@@ -245,12 +239,8 @@ after_processing_focus:
         raylib::SetMouseCursor(raylib::MOUSE_CURSOR_RESIZE_ALL);
         m_state = state::drawing_new_entity;
         break;
-      case restore_zoom:
-        m_camera.zoom = 1.0f;
-        break;
-      case quit:
-        m_should_close = true;
-        break;
+      case restore_zoom: m_camera.zoom = 1.0f; break;
+      case quit: m_should_close = true; break;
     }
   }
 
@@ -266,9 +256,7 @@ after_processing_focus:
     SetShaderValue(m_background_texture_shader, m_background_shader_grid_tile_size_as_percentage_location, &m_theme.grid_tile_size_as_percentage, SHADER_UNIFORM_FLOAT);
 
     BeginShaderMode(m_background_texture_shader);
-    {
-      DrawTexture(m_background_texture_for_shader.texture, 0, 0, WHITE);
-    }
+    { DrawTexture(m_background_texture_for_shader.texture, 0, 0, WHITE); }
     EndShaderMode();
   }
 

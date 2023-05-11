@@ -56,7 +56,7 @@ namespace ui {
 
     state m_state {state::just_looking};
     bool m_started_drawing {false};
-    new_entity_type m_new_entity_type{new_entity_type::nothing};
+    new_entity_type m_new_entity_type {new_entity_type::nothing};
 
     theme m_theme;
 
