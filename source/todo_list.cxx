@@ -48,7 +48,7 @@ namespace ui {
     m_border_box = raylib_helper::add_border_to_rectangle(m_bounding_box, m_theme);
   }
 
-  void todo_list::render() const {
+  void todo_list::render(raylib::Vector2 mouse_position_in_the_world) const {
     using namespace raylib;
     using namespace raylib_helper;
 
@@ -56,7 +56,7 @@ namespace ui {
     DrawRectangleRec(m_bounding_box, m_theme.entity_background);
     DrawRectangleRec(m_title_delimiter, m_theme.border);
 
-    m_title.render();
+    m_title.render(mouse_position_in_the_world);
   }
 
   bool todo_list::can_focus(raylib::Vector2 point) const {

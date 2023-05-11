@@ -16,7 +16,7 @@
 namespace ui {
   class note final : public entity {
   public:
-    void render() const override;
+    void render(raylib::Vector2 mouse_position_in_the_world) const override;
     bool can_focus(raylib::Vector2 point) const override;
     void send_events(std::span<event> events) override;
 

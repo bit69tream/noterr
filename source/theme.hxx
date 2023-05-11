@@ -9,6 +9,8 @@ namespace ui {
     float line_spacing;
     raylib::Font font;
 
+    bool render_text_cursor_only_on_mouse_hover;
+
     raylib::Color background;
 
     raylib::Color grid_color;

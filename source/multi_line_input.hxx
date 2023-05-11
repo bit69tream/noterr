@@ -16,11 +16,11 @@ namespace ui {
     multi_line_input(std::vector<std::wstring> lines, std::shared_ptr<raylib::Rectangle> bounding_box, const theme &theme);
     ~multi_line_input() = default;
 
-    void render() const override;
+    void render(raylib::Vector2 mouse_position_in_the_world) const override;
     void send_events(std::span<event> events) override;
 
   private:
-    void render_cursor() const;
+    void render_cursor(raylib::Vector2 mouse_position_in_the_world) const;
     void calculate_line_dimensions();
     void adjust_bounding_box();
 

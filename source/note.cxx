@@ -110,7 +110,7 @@ namespace ui {
     compute_element_coordinates();
   }
 
-  void note::render() const {
+  void note::render(raylib::Vector2 mouse_position_in_the_world) const {
     using namespace raylib;
     using namespace raylib_helper;
 
@@ -118,7 +118,7 @@ namespace ui {
     DrawRectangleRec(m_bounding_box, m_theme.entity_background);
     DrawRectangleRec(m_title_delimiter, m_theme.border);
 
-    m_title.render();
-    m_body.render();
+    m_title.render(mouse_position_in_the_world);
+    m_body.render(mouse_position_in_the_world);
   }
 };  // namespace ui

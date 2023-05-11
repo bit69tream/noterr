@@ -48,8 +48,12 @@ namespace ui {
     }
   }
 
-  void multi_line_input::render_cursor() const {
+  void multi_line_input::render_cursor(raylib::Vector2 mouse_position_in_the_world) const {
     using namespace raylib;
+
+    if (m_theme.render_text_cursor_only_on_mouse_hover && !CheckCollisionPointRec(mouse_position_in_the_world, *m_bounding_box)) {
+      return;
+    }
 
     const size_t cursor_column = static_cast<size_t>(m_cursor_column);
     const size_t cursor_row = static_cast<size_t>(m_cursor_row);
@@ -77,7 +81,7 @@ namespace ui {
     DrawRectangleRec(cursor, m_theme.cursor_color);
   }
 
-  void multi_line_input::render() const {
+  void multi_line_input::render(raylib::Vector2 mouse_position_in_the_world) const {
     if (m_lines.size() != m_line_dimensions.size()) {
       throw std::logic_error("m_lines.size() != m_line_dimensions.size()");
     }
@@ -89,7 +93,7 @@ namespace ui {
       y += m_line_dimensions[i].y + m_theme.line_spacing;
     }
 
-    render_cursor();
+    render_cursor(mouse_position_in_the_world);
   }
 
   void multi_line_input::send_events(std::span<event> events) {

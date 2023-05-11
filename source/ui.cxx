@@ -50,6 +50,8 @@ namespace ui {
       .line_spacing = 0,
       .font = LoadFontEx("DejaVuSans.ttf", font_size, nullptr, unicode_cyrillic_range_end),
 
+      .render_text_cursor_only_on_mouse_hover = true,
+
       .background = WHITE,
 
       .grid_color = GRAY,
@@ -268,10 +270,11 @@ after_processing_focus:
     {
       draw_background_with_grid_pattern();
 
+      const Vector2 mouse_position_in_the_world = GetScreenToWorld2D(GetMousePosition(), m_camera);
       BeginMode2D(m_camera);
       {
         for (const auto &entity : m_entities) {
-          entity->render();
+          entity->render(mouse_position_in_the_world);
         }
       }
       EndMode2D();

@@ -24,8 +24,12 @@ namespace ui {
     m_text_dimensions.y += 2 * m_theme.line_spacing;
   }
 
-  void single_line_input::render_cursor() const {
+  void single_line_input::render_cursor(raylib::Vector2 mouse_position_in_the_world) const {
     using namespace raylib;
+
+    if (m_theme.render_text_cursor_only_on_mouse_hover && !CheckCollisionPointRec(mouse_position_in_the_world, *m_bounding_box)) {
+      return;
+    }
 
     std::wstring_view text_before_cursor = m_text;
     text_before_cursor = text_before_cursor.substr(0, static_cast<size_t>(m_cursor_position));
@@ -50,10 +54,10 @@ namespace ui {
     m_bounding_box->height = std::max(m_text_dimensions.y, m_bounding_box->height);
   }
 
-  void single_line_input::render() const {
+  void single_line_input::render(raylib::Vector2 mouse_position_in_the_world) const {
     using namespace raylib;
 
-    render_cursor();
+    render_cursor(mouse_position_in_the_world);
     DrawTextCodepoints(m_theme.font, reinterpret_cast<const int *>(m_text.data()), static_cast<int>(m_text.size()), Vector2 {m_bounding_box->x, m_bounding_box->y}, m_theme.font_size,
                        m_theme.glyph_spacing, m_theme.entity_foreground);
   }
