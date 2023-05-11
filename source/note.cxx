@@ -81,9 +81,6 @@ namespace ui {
       if (std::holds_alternative<mouse_event>(boxed_event)) {
         auto event = std::get<mouse_event>(boxed_event);
 
-        // TODO: introduce something like `m_title_area` where user can click to focus `m_title`
-        // because right now user needs to press directly on the text to be able to focus it.
-        // same should be done for `m_body_bounding_box`
         if (raylib::CheckCollisionPointRec(event.point, *m_title_bounding_box)) {
           m_title_focused = true;
           title_events.push_back(event);

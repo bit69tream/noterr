@@ -36,7 +36,6 @@ namespace ui {
     raylib::Rectangle m_bounding_box;
     raylib::Rectangle m_border_box;
 
-    // TODO: a better way to manage focused elements
     bool m_title_focused {true};
     std::shared_ptr<raylib::Rectangle> m_title_bounding_box;
     single_line_input m_title;
