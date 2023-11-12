@@ -156,17 +156,9 @@ void main() {
 
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
       Vector2 mouse_delta = GetMouseDelta();
-      // m_camera.target.x -= mouse_delta.x / m_camera.zoom;
-      // m_camera.target.y -= mouse_delta.y / m_camera.zoom;
       m_camera.target.x -= mouse_delta.x;
       m_camera.target.y -= mouse_delta.y;
     }
-
-    // m_camera.zoom += GetMouseWheelMove() * 0.5f;
-
-    // constexpr float maximum_zoom = 2.0f;
-    // constexpr float minimum_zoom = 0.5f;
-    // m_camera.zoom = std::clamp(m_camera.zoom, minimum_zoom, maximum_zoom);
   }
 
   // NOTE: this can probably be written in a better way
