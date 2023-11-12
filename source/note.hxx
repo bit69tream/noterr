@@ -8,7 +8,6 @@
 #include "entity.hxx"
 #include "event.hxx"
 #include "multi_line_input.hxx"
-#include "raylib.h"
 #include "raylib.hxx"
 #include "single_line_input.hxx"
 #include "theme.hxx"
@@ -44,5 +43,6 @@ namespace ui {
 
     std::shared_ptr<raylib::Rectangle> m_body_bounding_box;
     multi_line_input m_body;
+    bool m_body_focused {false};
   };
 };  // namespace ui

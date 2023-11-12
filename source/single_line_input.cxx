@@ -24,10 +24,14 @@ namespace ui {
     m_text_dimensions.y += 2 * m_theme.line_spacing;
   }
 
-  void single_line_input::render_cursor(raylib::Vector2 mouse_position_in_the_world) const {
+  void single_line_input::render_cursor(raylib::Vector2 mouse_position_in_the_world, bool focused) const {
     using namespace raylib;
 
     if (m_theme.render_text_cursor_only_on_mouse_hover && !CheckCollisionPointRec(mouse_position_in_the_world, *m_bounding_box)) {
+      return;
+    }
+
+    if (m_theme.render_text_cursor_only_on_focus && !focused) {
       return;
     }
 
@@ -40,7 +44,7 @@ namespace ui {
 
     const Vector2 text_before_cursor_dimensions = raylib_helper::get_line_dimensions(text_before_cursor, m_theme);
     const Rectangle cursor = Rectangle {
-      .x = text_before_cursor_dimensions.x + m_bounding_box->x,
+      .x = text_before_cursor_dimensions.x + m_bounding_box->x - 1,
       .y = m_bounding_box->y,
       .width = m_theme.cursor_width,
       .height = static_cast<float>(m_theme.font.baseSize),
@@ -54,10 +58,10 @@ namespace ui {
     m_bounding_box->height = std::max(m_text_dimensions.y, m_bounding_box->height);
   }
 
-  void single_line_input::render(raylib::Vector2 mouse_position_in_the_world) const {
+  void single_line_input::render(raylib::Vector2 mouse_position_in_the_world, bool focused) const {
     using namespace raylib;
 
-    render_cursor(mouse_position_in_the_world);
+    render_cursor(mouse_position_in_the_world, focused);
     DrawTextCodepoints(m_theme.font, reinterpret_cast<const int *>(m_text.data()), static_cast<int>(m_text.size()), Vector2 {m_bounding_box->x, m_bounding_box->y}, m_theme.font_size,
                        m_theme.glyph_spacing, m_theme.entity_foreground);
   }

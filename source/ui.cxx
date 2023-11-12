@@ -50,7 +50,8 @@ namespace ui {
       .line_spacing = 0,
       .font = LoadFontEx("DejaVuSans.ttf", font_size, nullptr, unicode_cyrillic_range_end),
 
-      .render_text_cursor_only_on_mouse_hover = true,
+      .render_text_cursor_only_on_mouse_hover = false,
+      .render_text_cursor_only_on_focus = true,
 
       .background = WHITE,
 

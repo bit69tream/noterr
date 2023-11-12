@@ -10,6 +10,7 @@ namespace ui {
     raylib::Font font;
 
     bool render_text_cursor_only_on_mouse_hover;
+    bool render_text_cursor_only_on_focus;
 
     raylib::Color background;
 

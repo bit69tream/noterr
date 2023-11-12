@@ -56,7 +56,7 @@ namespace ui {
     DrawRectangleRec(m_bounding_box, m_theme.entity_background);
     DrawRectangleRec(m_title_delimiter, m_theme.border);
 
-    m_title.render(mouse_position_in_the_world);
+    m_title.render(mouse_position_in_the_world, m_title_focused);
   }
 
   bool todo_list::can_focus(raylib::Vector2 point) const {

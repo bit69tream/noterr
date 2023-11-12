@@ -5,7 +5,6 @@
 #include <vector>
 
 #include "note.hxx"
-#include "raylib.h"
 #include "raylib.hxx"
 #include "raylib_helper.hxx"
 
@@ -88,12 +87,22 @@ namespace ui {
           m_title_focused = false;
           body_events.push_back(event);
         }
+
+        if (raylib::CheckCollisionPointRec(event.point, *m_body_bounding_box)) {
+          m_body_focused = true;
+          body_events.push_back(event);
+        } else {
+          m_body_focused = false;
+          body_events.push_back(event);
+        }
       } else if (std::holds_alternative<keyboard_event>(boxed_event)) {
         auto event = std::get<keyboard_event>(boxed_event);
 
         if (m_title_focused) {
           title_events.push_back(event);
-        } else {
+        }
+
+        if (m_body_focused) {
           body_events.push_back(event);
         }
       }
@@ -118,7 +127,7 @@ namespace ui {
     DrawRectangleRec(m_bounding_box, m_theme.entity_background);
     DrawRectangleRec(m_title_delimiter, m_theme.border);
 
-    m_title.render(mouse_position_in_the_world);
-    m_body.render(mouse_position_in_the_world);
+    m_title.render(mouse_position_in_the_world, m_title_focused);
+    m_body.render(mouse_position_in_the_world, m_body_focused);
   }
 };  // namespace ui

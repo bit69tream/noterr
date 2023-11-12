@@ -5,7 +5,6 @@
 
 #include "event.hxx"
 #include "multi_line_input.hxx"
-#include "raylib.h"
 #include "raylib_helper.hxx"
 
 namespace ui {
@@ -48,10 +47,14 @@ namespace ui {
     }
   }
 
-  void multi_line_input::render_cursor(raylib::Vector2 mouse_position_in_the_world) const {
+  void multi_line_input::render_cursor(raylib::Vector2 mouse_position_in_the_world, bool focused) const {
     using namespace raylib;
 
     if (m_theme.render_text_cursor_only_on_mouse_hover && !CheckCollisionPointRec(mouse_position_in_the_world, *m_bounding_box)) {
+      return;
+    }
+
+    if (m_theme.render_text_cursor_only_on_focus && !focused) {
       return;
     }
 
@@ -81,7 +84,7 @@ namespace ui {
     DrawRectangleRec(cursor, m_theme.cursor_color);
   }
 
-  void multi_line_input::render(raylib::Vector2 mouse_position_in_the_world) const {
+  void multi_line_input::render(raylib::Vector2 mouse_position_in_the_world, bool focused) const {
     if (m_lines.size() != m_line_dimensions.size()) {
       throw std::logic_error("m_lines.size() != m_line_dimensions.size()");
     }
@@ -93,7 +96,7 @@ namespace ui {
       y += m_line_dimensions[i].y + m_theme.line_spacing;
     }
 
-    render_cursor(mouse_position_in_the_world);
+    render_cursor(mouse_position_in_the_world, focused);
   }
 
   void multi_line_input::send_events(std::span<event> events) {
@@ -136,6 +139,9 @@ namespace ui {
           }
         }
       }
+
+      // if (std::holds_alternative<mouse_event>(boxed_event)) {
+      // }
     }
 
     m_cursor_row = std::clamp(m_cursor_row, 0L, static_cast<ssize_t>(m_lines.size()));

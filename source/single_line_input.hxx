@@ -17,11 +17,11 @@ namespace ui {
 
     ~single_line_input() = default;
 
-    void render(raylib::Vector2 mouse_position_in_the_world) const override;
+    void render(raylib::Vector2 mouse_position_in_the_world, bool focused) const override;
     void send_events(std::span<event> events) override;
 
   private:
-    void render_cursor(raylib::Vector2 mouse_position_in_the_world) const;
+    void render_cursor(raylib::Vector2 mouse_position_in_the_world, bool focused) const;
     void adjust_bounding_box();
     void adjust_text_dimensions();
 
@@ -31,7 +31,6 @@ namespace ui {
     std::wstring m_text;
     raylib::Vector2 m_text_dimensions;
     raylib::Vector2 m_text_position;
-    bool m_focused {false};
     ssize_t m_cursor_position {0};
   };
 }  // namespace ui
