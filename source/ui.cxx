@@ -155,14 +155,17 @@ void main() {
 
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
       Vector2 mouse_delta = GetMouseDelta();
-      m_camera.target.x -= mouse_delta.x / m_camera.zoom;
-      m_camera.target.y -= mouse_delta.y / m_camera.zoom;
+      // m_camera.target.x -= mouse_delta.x / m_camera.zoom;
+      // m_camera.target.y -= mouse_delta.y / m_camera.zoom;
+      m_camera.target.x -= mouse_delta.x;
+      m_camera.target.y -= mouse_delta.y;
     }
 
-    m_camera.zoom += GetMouseWheelMove() * 0.5f;
-    constexpr float maximum_zoom = 2.0f;
-    constexpr float minimum_zoom = 0.5f;
-    m_camera.zoom = std::clamp(m_camera.zoom, minimum_zoom, maximum_zoom);
+    // m_camera.zoom += GetMouseWheelMove() * 0.5f;
+
+    // constexpr float maximum_zoom = 2.0f;
+    // constexpr float minimum_zoom = 0.5f;
+    // m_camera.zoom = std::clamp(m_camera.zoom, minimum_zoom, maximum_zoom);
   }
 
   // NOTE: this can probably be written in a better way
@@ -249,7 +252,7 @@ after_processing_focus:
           m_state = popup_menu;
           m_popup = make_unique<popup>(
             vector<tuple<string_view, popup_actions>> {
-              make_tuple("Restore zoom", popup_actions::restore_zoom),
+              // make_tuple("Restore zoom", popup_actions::restore_zoom),
               make_tuple("New note", popup_actions::create_new_note),
               make_tuple("New todo list", popup_actions::create_new_todo_list),
               make_tuple("Quit", popup_actions::quit),
