@@ -119,7 +119,7 @@ namespace ui {
     compute_element_coordinates();
   }
 
-  void note::render(raylib::Vector2 mouse_position_in_the_world) const {
+  void note::render(raylib::Vector2 mouse_position_in_the_world, bool focused) const {
     using namespace raylib;
     using namespace raylib_helper;
 
@@ -127,7 +127,7 @@ namespace ui {
     DrawRectangleRec(m_bounding_box, m_theme.entity_background);
     DrawRectangleRec(m_title_delimiter, m_theme.border);
 
-    m_title.render(mouse_position_in_the_world, m_title_focused);
-    m_body.render(mouse_position_in_the_world, m_body_focused);
+    m_title.render(mouse_position_in_the_world, focused && m_title_focused);
+    m_body.render(mouse_position_in_the_world, focused && m_body_focused);
   }
 };  // namespace ui

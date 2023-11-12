@@ -303,7 +303,8 @@ after_processing_focus:
       BeginMode2D(m_camera);
       {
         for (const auto &entity : m_entities) {
-          entity->render(mouse_position_in_the_world);
+          bool focused = m_state == state::focused_on_entity && entity == m_entities.back();
+          entity->render(mouse_position_in_the_world, focused);
         }
       }
       EndMode2D();
