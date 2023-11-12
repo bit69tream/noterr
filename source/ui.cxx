@@ -245,7 +245,6 @@ after_processing_focus:
           m_state = popup_menu;
           m_popup = make_unique<popup>(
             vector<tuple<string_view, popup_actions>> {
-              // make_tuple("Restore zoom", popup_actions::restore_zoom),
               make_tuple("New note", popup_actions::create_new_note),
               make_tuple("New todo list", popup_actions::create_new_todo_list),
               make_tuple("Quit", popup_actions::quit),
@@ -270,7 +269,6 @@ after_processing_focus:
         raylib::SetMouseCursor(raylib::MOUSE_CURSOR_RESIZE_ALL);
         m_state = state::drawing_new_entity;
         break;
-      case restore_zoom: m_camera.zoom = 1.0f; break;
       case quit: m_should_close = true; break;
     }
   }

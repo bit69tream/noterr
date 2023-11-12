@@ -12,7 +12,6 @@ namespace ui {
   enum class popup_actions {
     create_new_note,
     create_new_todo_list,
-    restore_zoom,
     quit,
   };
 
