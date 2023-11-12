@@ -73,7 +73,40 @@ namespace ui {
       .cursor_color = BLACK,
     };
 
-    m_background_texture_shader = LoadShader(nullptr, "source/background_pattern.fs");
+    m_background_texture_shader = LoadShaderFromMemory(nullptr, R"glsl(
+#version 330
+out vec4 finalColor;
+
+in vec2 fragTexCoord;
+in vec4 fragColor;
+
+uniform vec4 screenResolutionAndTopLeftPoint;
+uniform float gridTilePercent;
+uniform sampler2D texture0;
+uniform vec4 colDiffuse;
+
+void main() {
+  float gridWidth = (screenResolutionAndTopLeftPoint.x * gridTilePercent);
+  float gridHeight = (screenResolutionAndTopLeftPoint.y * gridTilePercent);
+
+  float gridSize = gridWidth;
+  if (gridWidth > gridHeight) {
+    gridSize = gridHeight;
+  }
+
+  float x = ((fragTexCoord.x * screenResolutionAndTopLeftPoint.x) + screenResolutionAndTopLeftPoint.z);
+  float y = ((fragTexCoord.y * screenResolutionAndTopLeftPoint.y) + screenResolutionAndTopLeftPoint.w);
+
+  float mx = floor(mod(x, gridSize));
+  float my = floor(mod(y, gridSize));
+
+  if (mx == 0.0 || my == 0.0) {
+    finalColor = vec4(0.0);
+  } else {
+    finalColor = fragColor * texture(texture0, fragTexCoord) * colDiffuse;
+  }
+}
+)glsl");
 
     m_background_shader_screen_resolution_location = GetShaderLocation(m_background_texture_shader, "screenResolutionAndTopLeftPoint");
     m_background_shader_grid_tile_size_as_percentage_location = GetShaderLocation(m_background_texture_shader, "gridTilePercent");
