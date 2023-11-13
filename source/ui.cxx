@@ -41,14 +41,13 @@ namespace ui {
     };
 
     constexpr int font_size = 25;
-    constexpr int unicode_cyrillic_range_end = 0x04FF;
 
     // TODO: load themes from config file
     m_theme = theme {
       .font_size = font_size,
       .glyph_spacing = 2,
       .line_spacing = 0,
-      .font = LoadFontEx("DejaVuSans.ttf", font_size, nullptr, unicode_cyrillic_range_end),
+      .font = raylib_helper::load_font("DejaVuSans.ttf", font_size),
 
       .render_text_cursor_only_on_mouse_hover = false,
       .render_text_cursor_only_on_focus = true,

@@ -40,7 +40,8 @@ add_executable(${PROJECT_NAME}
   source/note.cxx
   source/single_line_input.cxx
   source/multi_line_input.cxx
-  source/todo_list.cxx)
+  source/todo_list.cxx
+  source/stb_implementation.cxx)
 set(raylib_VERBOSE 1)
 target_link_libraries(${PROJECT_NAME} raylib)
 

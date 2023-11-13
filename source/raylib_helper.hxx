@@ -1,5 +1,6 @@
 #pragma once
 
+#include <filesystem>
 #include <string_view>
 
 #include "raylib.hxx"
@@ -18,4 +19,6 @@ namespace raylib_helper {
   Rectangle add_border_to_rectangle(Rectangle rectangle, const ui::theme &theme);
 
   Vector2 get_line_dimensions(std::wstring_view line, const ui::theme &theme);
+
+  Font load_font(std::filesystem::path file_path, int size);
 };  // namespace raylib_helper
