@@ -10,7 +10,6 @@
 #include "popup.hxx"
 #include "raylib_helper.hxx"
 #include "single_line_input.hxx"
-#include "todo_list.hxx"
 #include "ui.hxx"
 
 namespace ui {
@@ -202,9 +201,6 @@ void main() {
             case new_entity_type::note: {
               new_entity = std::make_unique<note>(bounding_box, m_theme);
             } break;
-            case new_entity_type::todo_list: {
-              new_entity = std::make_unique<todo_list>(bounding_box, m_theme);
-            } break;
             case new_entity_type::nothing: {
               throw std::logic_error("BUG");
             }
@@ -245,7 +241,6 @@ after_processing_focus:
           m_popup = make_unique<popup>(
             vector<tuple<string_view, popup_actions>> {
               make_tuple("New note", popup_actions::create_new_note),
-              make_tuple("New todo list", popup_actions::create_new_todo_list),
               make_tuple("Quit", popup_actions::quit),
             },
             GetMousePosition(), m_theme);
@@ -259,7 +254,6 @@ after_processing_focus:
 
     m_new_entity_type = new_entity_type::nothing;
     switch (action) {
-      case create_new_todo_list: m_new_entity_type = new_entity_type::todo_list; [[fallthrough]];
       case create_new_note:
         if (m_new_entity_type == new_entity_type::nothing) {
           m_new_entity_type = new_entity_type::note;

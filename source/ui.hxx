@@ -22,7 +22,6 @@ namespace ui {
   enum class new_entity_type {
     nothing,
     note,
-    todo_list,
   };
 
   class ui {
